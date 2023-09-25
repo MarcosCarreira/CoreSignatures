@@ -1,0 +1,8158 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\begin_preamble
+\usepackage{lastpage}
+\usepackage{breakcites}
+\lhead{}
+\chead{}
+\rhead{}
+\lfoot{}
+\cfoot{{Page} \thepage { of} \pageref{LastPage}}
+\rfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\usepackage{indentfirst}
+\end_preamble
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\float_placement H
+\paperfontsize 12
+\spacing single
+\use_hyperref true
+\pdf_bookmarks true
+\pdf_bookmarksnumbered false
+\pdf_bookmarksopen false
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks false
+\pdf_pdfborder false
+\pdf_colorlinks false
+\pdf_backref false
+\pdf_pdfusetitle true
+\pdf_quoted_options "colorlinks=true,citecolor=blue"
+\papersize a4paper
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 2.5cm
+\topmargin 3cm
+\rightmargin 2.5cm
+\bottommargin 3cm
+\footskip 1cm
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle fancy
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Core Signatures and Inversions
+\end_layout
+
+\begin_layout Date
+Sep-2023
+\end_layout
+
+\begin_layout Author
+Marcos Costa Santos Carreira
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+marcoscscarreira@gmail.com
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Abstract
+The signature method allows transformations of the original data (either
+ as a mathematical function or as irregularly sampled data) into a feature
+ space with several interesting properties, allowing for models and controls
+ to be developed into this feature space.
+ Because the full signature (even truncated) is still redundant, it is usual
+ to calculate the log signature, which has a lower size.
+ In this paper we introduce core signatures, which are subsets of the original
+ signatures with the same size as log signatures and a faster and easier
+ calculation algorithm (systematic shuffle product leading to a sparse linear
+ system).
+ Because the core signatures are subsets of the original signatures, we
+ can use Chen's Identity to invert a given core signature in order to easily
+ find two (or three, where appropriate) line segments that, when concatenated,
+ produce the original core signature, improving interpretability.
+ We discuss briefly the use of time-ordered paths for term structure modeling
+ in finance (to be discussed in depth in a subsequent paper).
+ Mathematica code is available on GitHub at 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://github.com/MarcosCarreira/CoreSignatures
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Abstract
+
+\shape italic
+Keywords
+\shape default
+: Signatures; log signatures; inversion of signatures; term structure modeling
+\end_layout
+
+\begin_layout Abstract
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Introduction
+\end_layout
+
+\begin_layout Quote
+\begin_inset Quotes eld
+\end_inset
+
+E com cinco ou seis retas é fácil fazer um castelo
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Quote
+Excerpt from the song Aquarela, by Antonio Pecci Filho (Toquinho), 1983
+\end_layout
+
+\begin_layout Standard
+Signatures are one of the best ways to understand the behavior of paths.
+\end_layout
+
+\begin_layout Standard
+What are paths? Mathematically, we can define paths as functions that map
+ an interval (generally defined as 
+\begin_inset Formula $\left[a,b\right]$
+\end_inset
+
+, which will later be reparametrized to 
+\begin_inset Formula $\left[0,1\right]$
+\end_inset
+
+ without problems) to the multidimensional space 
+\begin_inset Formula $\mathbb{R}^{d}$
+\end_inset
+
+.
+ Going forward we will assume that the paths are of bounded variation and
+ piecewise differentiable.
+ For a more complete definition and mathematical subtleties, the standard
+ reference is 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Lyons"
+literal "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+This signature representation is useful to analyze term structures because
+ we compare the shapes of different curves at different points in time and
+ scale, and some behaviors like inversions, humps, steepenings and others
+ are quite common among different asset classes and have similar reasons.
+ In feature space it is easier to compare the US Treasury yields (up to
+ 30 years ahead) with Brazil's DIxPré Interest Rate Curve implied from futures
+ (up to 10 years, but 20 years ago liquid up to 2 years).
+\end_layout
+
+\begin_layout Standard
+We would like to share two practical results:
+\end_layout
+
+\begin_layout Standard
+In the first result we show how to substitute log signatures (a more compressed
+ representation of the signatures, but harder to calculate) with core signatures
+, which show the same compression; but a core signature is a subset of the
+ signature, so it is easier to calculate using the shuffle product; the
+ reconstruction of the full signature (now unnecessary) is also easier.
+\end_layout
+
+\begin_layout Standard
+The second result is an inversion algorithm using Chen's Identity to find
+ which concatenation of two (or, when necessary, three) signatures of line
+ segments can generate the same core signature (up to a truncation level).
+ We can either solve a more complex system involving the concatenation of
+ a larger number of line segments or we apply the same (2/3) breakdown to
+ find the indices of the breaking points (on time-indexed paths) and recalculate
+ the estimated values given these indices.
+\end_layout
+
+\begin_layout Standard
+This work relied heavily on: (i) 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Primer"
+literal "false"
+
+\end_inset
+
+, an excellent primer on signatures; we will provide the Mathematica code
+ to some of the examples of this paper; (ii) 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Fermanian_Thesis"
+literal "false"
+
+\end_inset
+
+, a great and comprehensive PhD Thesis that collects several of Adeline
+ Fermanian's papers on signatures, applications and inversion algorithms
+ (we will quote the individual papers like 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "embedding"
+literal "false"
+
+\end_inset
+
+ and 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "inversion"
+literal "false"
+
+\end_inset
+
+ when possible/applicable); (iii)
+\begin_inset CommandInset citation
+LatexCommand cite
+key "iisignature"
+literal "false"
+
+\end_inset
+
+, 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "iisignature 1004"
+literal "false"
+
+\end_inset
+
+, 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "iisignature CRISM"
+literal "false"
+
+\end_inset
+
+ and 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "log signatures"
+literal "false"
+
+\end_inset
+
+, papers and documents that support Jeremy Reizenstein's work with the iisignatu
+re Python package.
+\end_layout
+
+\begin_layout Standard
+Two papers (
+\begin_inset CommandInset citation
+LatexCommand cite
+key "varieties"
+literal "false"
+
+\end_inset
+
+ and 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "learning"
+literal "false"
+
+\end_inset
+
+) discuss similar goals; 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "varieties"
+literal "false"
+
+\end_inset
+
+ is focused on polynomial and piecewise linear paths, with the degree of
+ prime ideals corresponding to the size of log signatures and core signatures;
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "learning"
+literal "false"
+
+\end_inset
+
+ is focused on what can be learned from the third signature assuming polynomial
+ paths, piecewise linear paths and a dictionary of paths.
+ Although our results were derived in the same mathematical detail and completen
+ess as those two papers, we think they are practical enough to be useful
+ for signatures coming from more general paths, as we hope to show.
+ Further work linking our results to these papers is probably worth pursuing.
+\end_layout
+
+\begin_layout Section
+Signatures
+\end_layout
+
+\begin_layout Subsection
+Definitions
+\end_layout
+
+\begin_layout Subsubsection
+Paths
+\end_layout
+
+\begin_layout Standard
+Let's start by following 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Primer"
+literal "false"
+
+\end_inset
+
+ and showing the Mathematica code that can produce the plots and results.
+\end_layout
+
+\begin_layout Standard
+Figure 1 shows two 2d smooth paths, defined by:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+X_{t}=\left\{ X_{t}^{1},X_{t}^{2}\right\} =\left\{ t,t^{3}\right\} \ ,\ t\in\left[-2,+2\right]
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+And:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+X_{t}=\left\{ X_{t}^{1},X_{t}^{2}\right\} =\left\{ \cos\left(t\right),\sin\left(t\right)\right\} \ ,\ t\in\left[0,+2\pi\right]
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We can reproduce this with ParametricPlot (Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:2d-smooth-paths"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+):
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename /Users/marcoscscarreira/Signatures/Pics/Smooth_a.png
+	lyxscale 50
+	scale 45
+
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset Graphics
+	filename /Users/marcoscscarreira/Signatures/Pics/Smooth_b.png
+	lyxscale 50
+	scale 45
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+2d smooth paths using ParametricPlot
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:2d-smooth-paths"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+And we can look at piecewise functions as well:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+X_{t}=\left\{ X_{t}^{1},X_{t}^{2}\right\} =\begin{cases}
+\left\{ t,t^{2}\right\}  & t\in\left[-2,0\right]\\
+\left\{ t,t^{3}\right\}  & t\in\left(0,+2\right]
+\end{cases}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+And piecewise linear functions (which will be used a lot); both are shown
+ in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:2d-pw-smooth-paths"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+:
+\begin_inset Formula 
+\begin{equation}
+X_{t}=\left\{ X_{t}^{1},X_{t}^{2}\right\} =\begin{cases}
+\left\{ t,3+2t\right\}  & t\in\left[-2,-1\right]\\
+\left\{ t,-t\right\}  & t\in\left(-1,0\right]\\
+\left\{ t,3t\right\}  & t\in\left(0,+1\right]\\
+\left\{ t,5-2t\right\}  & t\in\left(+1,+2\right]
+\end{cases}
+\end{equation}
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename /Users/marcoscscarreira/Signatures/Pics/SmoothPW_a.png
+	lyxscale 50
+	scale 45
+
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset Graphics
+	filename /Users/marcoscscarreira/Signatures/Pics/SmoothPW_b.png
+	lyxscale 50
+	scale 45
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+2d piecewise smooth paths using ParametricPlot
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:2d-pw-smooth-paths"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Iterated Integrals
+\end_layout
+
+\begin_layout Standard
+Following again 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Primer"
+literal "false"
+
+\end_inset
+
+, looking at the Example 3 in 1.1.2 (Path integrals):
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+X_{t}=\left\{ X_{t}^{1},X_{t}^{2}\right\} =\left\{ t^{2},t^{3}\right\} \ ,\ t\in\left[0,+1\right]
+\]
+
+\end_inset
+
+We can also calculate the iterated integral:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\int_{0}^{1}X_{t}^{1}\mathrm{d}X_{t}^{2}=\int_{0}^{1}t^{2}3t^{2}\mathrm{d}t=\frac{3}{5}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+As:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\text{LineIntegrate}\left[t^{2},\{x\}\in\text{ParametricRegion}\left[\left\{ t^{3}\right\} ,\left\{ \left\{ t,0,1\right\} \right\} \right]\right]=\frac{3}{5}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We will automate the iterated integrals with:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "breaklines=true"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+iterinteg[functions_, limits_, assumptions_]:= Fold[
+\end_layout
+
+\begin_layout Plain Layout
+
+  Integrate[#1 * #2[[1]], #2[[2]],
+\end_layout
+
+\begin_layout Plain Layout
+
+  Assumptions->assumptions]&, 1, Transpose[{functions, limits}]];
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+With the signature defined as an infinite collection of iterated integrals:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align}
+S\left(X\right)_{a,b}= & \left\{ 1,\right.\nonumber \\
+ & S\left(X\right)_{a,b}^{1},\ldots,S\left(X\right)_{a,b}^{d},\\
+ & S\left(X\right)_{a,b}^{1,1},S\left(X\right)_{a,b}^{1,2},\ldots,S\left(X\right)_{a,b}^{d,d},\nonumber \\
+ & \left.\ldots\right\} \nonumber 
+\end{align}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+With each term 
+\begin_inset Formula $S\left(X\right)_{a,b}^{i_{1},...,i_{k}}$
+\end_inset
+
+ is defined by the iterated integrals:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+S\left(X\right)_{a,t}^{i_{1},...,i_{k}}=\underset{t_{k}}{\int_{a}^{t}}\ldots\underset{t_{1}}{\int_{a}^{t_{2}}}\mathrm{d}X_{t_{1}}^{i_{1}}\ldots\mathrm{d}X_{t_{k}}^{i_{k}}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+It might be useful to view them grouped by level and folded as tensors,
+ as shown in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "iisignature CRISM"
+literal "false"
+
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename /Users/marcoscscarreira/Signatures/Pics/Folded.png
+	lyxscale 50
+	scale 45
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Signatures with d=2
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:folded"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Where the set W of all multi-indexes is (mirroring Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:folded"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+):
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\begin{array}{cc}
+1 & 2\end{array}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\begin{array}{cc}
+11 & 12\\
+21 & 22
+\end{array}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\begin{array}{cccc}
+111 & 112 & 211 & 212\\
+121 & 122 & 221 & 222
+\end{array}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\begin{array}{cccc}
+1111 & 1112 & 1211 & 1212\\
+1121 & 1122 & 1221 & 1222\\
+2111 & 2112 & 2211 & 2212\\
+2121 & 2122 & 2221 & 2222
+\end{array}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+And the total number of terms in the signature of dimension 
+\begin_inset Formula $d$
+\end_inset
+
+ up to level 
+\begin_inset Formula $k$
+\end_inset
+
+ (excluding the 1 at level 0) is equal to:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\begin{cases}
+\sum_{k=0}^{K}d^{k}=\frac{d^{K+1}-1}{d-1}-1 & d>1\\
+K & d=1
+\end{cases}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+So with a helper function to 
+\begin_inset Quotes eld
+\end_inset
+
+fold
+\begin_inset Quotes erd
+\end_inset
+
+ each level in the correct tensor shape:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "breaklines=true"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+tensorfold[list_, dim_:2]:= If[Length[list]>=dim,
+\end_layout
+
+\begin_layout Plain Layout
+
+  ArrayReshape[list, ConstantArray[dim, Log[dim, Length[list]]]],
+\end_layout
+
+\begin_layout Plain Layout
+
+  list];
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We define the 
+\shape smallcaps
+\color blue
+signat
+\shape default
+\color inherit
+ function in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "alg:The-signat-function"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, which takes as inputs a list of 
+\shape italic
+paths
+\shape default
+, the domain 
+\begin_inset Formula $\left(a,b\right)$
+\end_inset
+
+ and the optional value 
+\shape italic
+level
+\shape default
+, which is the level at which we truncate the signature:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float algorithm
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset listings
+lstparams "breaklines=true"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+signat[paths_, limits_, level_:3]:= Module[
+\end_layout
+
+\begin_layout Plain Layout
+
+  {dpaths, dpathsf, integrands, ilimits, iassump, results},
+\end_layout
+
+\begin_layout Plain Layout
+
+  dpaths= D[paths,t];
+\end_layout
+
+\begin_layout Plain Layout
+
+  dpathsf= Map[Function[t, #]&, dpaths, {2}];
+\end_layout
+
+\begin_layout Plain Layout
+
+  integrands= Table[Map[Tuples,Transpose[
+\end_layout
+
+\begin_layout Plain Layout
+
+    Table[Map[#[Subscript[t,j]]&,dpathsf,{2}],{j,1,k}]]],
+\end_layout
+
+\begin_layout Plain Layout
+
+    {k,1,level}];
+\end_layout
+
+\begin_layout Plain Layout
+
+  ilimits= Table[Table[{Subscript[t,j],limits[[1]],
+\end_layout
+
+\begin_layout Plain Layout
+
+    If[j==k,limits[[2]],Subscript[t,j+1]]},{j,1,k}],
+\end_layout
+
+\begin_layout Plain Layout
+
+    {k,1,level}];
+\end_layout
+
+\begin_layout Plain Layout
+
+  iassump= Fold[(#1 && (limits[[1]]<=Subscript[t,#2]<=limits[[2]]))&,
+\end_layout
+
+\begin_layout Plain Layout
+
+    (limits[[1]]<=Subscript[t,1]<=limits[[2]]), Range[2,level]];
+\end_layout
+
+\begin_layout Plain Layout
+
+  results= Table[Map[iterinteg[#,ilimits[[k]],iassump]&,integrands[[k]],{2}],
+\end_layout
+
+\begin_layout Plain Layout
+
+    {k,1,level}];
+\end_layout
+
+\begin_layout Plain Layout
+
+  Map[tensorfold,Map[Prepend[#,{1}]&,Transpose[results]],{2}]];
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+The 
+\shape smallcaps
+\color blue
+signat
+\shape default
+\color inherit
+ function
+\begin_inset CommandInset label
+LatexCommand label
+name "alg:The-signat-function"
+
+\end_inset
+
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+And look at Example 6 at 1.2.2 in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Primer"
+literal "false"
+
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename /Users/marcoscscarreira/Signatures/Pics/SameChord.png
+	lyxscale 50
+	scale 45
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Two 2d paths with the same chord
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:2d-paths-same-chord"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We can see their truncated signatures up to level 3 on Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:Level3Signats"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, where path 1 is the original 
+\begin_inset Formula $\left\{ 3+t,\left(3+t\right)^{2}\right\} $
+\end_inset
+
+ path from 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Primer"
+literal "false"
+
+\end_inset
+
+ and path 2 is the 
+\begin_inset Quotes eld
+\end_inset
+
+inverted
+\begin_inset Quotes erd
+\end_inset
+
+ 
+\begin_inset Formula $\left\{ 3+t,9+16\cdot t-t^{2}\right\} $
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="7" columns="3">
+<features tabularvalignment="middle">
+<column alignment="right" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="right" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Level
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Path
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Signature
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="right" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\left(5,55\right)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\left(5,55\right)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="right" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\left(\begin{array}{cc}
+25/2 & 475/3\\
+350/3 & 3025/2
+\end{array}\right)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\left(\begin{array}{cc}
+25/2 & 350/3\\
+475/3 & 3025/2
+\end{array}\right)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="right" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\left(\begin{array}{cc}
+125/6 & 1125/4\\
+1375/6 & 18875/6
+\end{array}\right)\left(\begin{array}{cc}
+2125/12 & 7250/3\\
+2000 & 166375/6
+\end{array}\right)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\left(\begin{array}{cc}
+125/6 & 2125/12\\
+1375/6 & 2000
+\end{array}\right)\left(\begin{array}{cc}
+1125/4 & 7250/3\\
+18875/6 & 166375/6
+\end{array}\right)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Signatures of the 2d paths up to level 3
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:Level3Signats"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We can see how level 2 is flipped around the diagonal 
+\begin_inset Formula $\left(12\leftrightarrow21\right)$
+\end_inset
+
+, and if we think of the tensors on level 3 as a cube, we can see this flip
+ on a diagonal also 
+\begin_inset Formula $\left(1x2\leftrightarrow2x1\right)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+We can calculate the signature of other functions, like 
+\begin_inset Formula $\sin\left(k\cdot\pi\cdot t^{q}\right)$
+\end_inset
+
+, shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:2d-smooth-sins"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ and Tables 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:Levelupto3Sins"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ and 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:Level4Sins"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ (it's implicit that the 2d path is defined as 
+\begin_inset Formula $\left\{ t,\sin\left(k\cdot\pi\cdot t^{q}\right)\right\} $
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename /Users/marcoscscarreira/Signatures/Pics/Sin_a.png
+	lyxscale 30
+	scale 20
+
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset Graphics
+	filename /Users/marcoscscarreira/Signatures/Pics/Sin_b.png
+	lyxscale 30
+	scale 20
+
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset Graphics
+	filename /Users/marcoscscarreira/Signatures/Pics/Sin_c.png
+	lyxscale 24
+	scale 16
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+2d smooth paths with different argument for 
+\begin_inset Formula $\left\{ t,\sin\left(k\cdot\pi\cdot t^{q}\right)\right\} $
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:2d-smooth-sins"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The 
+\begin_inset Formula $\left\{ t,\sin\left(k\cdot\pi\cdot t\right)\right\} $
+\end_inset
+
+ paths might be seen as adversarial paths, since you need to get more levels
+ on the signature to be able to get the details of the path and they're
+ not piecewise linear.
+ In Tables 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:Levelupto3Sins"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ and 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:Level4Sins"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, 
+\begin_inset Formula $FS\left(x\right)$
+\end_inset
+
+ is the FresnelS integral evaluated at
+\begin_inset Formula $x$
+\end_inset
+
+, and
+\begin_inset Formula $FC\left(x\right)$
+\end_inset
+
+ is the FresnelC integral evaluated at
+\begin_inset Formula $x$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+
+\size scriptsize
+\begin_inset Tabular
+<lyxtabular version="3" rows="19" columns="3">
+<features tabularvalignment="middle">
+<column alignment="right" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="right" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+Level
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+Path
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+Signature
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="right" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Tabular
+<lyxtabular version="3" rows="1" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Tabular
+<lyxtabular version="3" rows="1" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Tabular
+<lyxtabular version="3" rows="1" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Tabular
+<lyxtabular version="3" rows="1" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+5
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Tabular
+<lyxtabular version="3" rows="1" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+6
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Tabular
+<lyxtabular version="3" rows="1" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="right" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Tabular
+<lyxtabular version="3" rows="2" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $-\frac{2}{\pi}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{2}{\pi}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $0$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Tabular
+<lyxtabular version="3" rows="2" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $0$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $0$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $0$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Tabular
+<lyxtabular version="3" rows="2" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $-\frac{FS\left(\sqrt{2}\right)}{\sqrt{2}}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{FS\left(\sqrt{2}\right)}{\sqrt{2}}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $0$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Tabular
+<lyxtabular version="3" rows="2" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $-\frac{FS\left(2\right)}{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{FS\left(2\right)}{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $0$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+5
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Tabular
+<lyxtabular version="3" rows="2" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $0$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $0$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $0$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+6
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Tabular
+<lyxtabular version="3" rows="2" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $-\frac{FS\left(2\sqrt{2}\right)}{2\sqrt{2}}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{FS\left(2\sqrt{2}\right)}{2\sqrt{2}}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $0$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="right" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Tabular
+<lyxtabular version="3" rows="2" columns="4">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{6}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $-\frac{1}{\pi}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{\pi}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $-\frac{1}{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $0$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{4}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{4}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $0$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Tabular
+<lyxtabular version="3" rows="2" columns="4">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{6}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{2\pi}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{2\pi}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $-\frac{1}{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $-\frac{1}{\pi}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{4}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{4}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $0$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Tabular
+<lyxtabular version="3" rows="2" columns="4">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{6}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $-\frac{1}{\pi}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $-\frac{1}{\pi}+\frac{FS\left(\sqrt{2}\right)}{\sqrt{2}}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $-\frac{1}{2}+\frac{FC\left(2\right)}{4}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{2}{\pi}-\frac{FS\left(\sqrt{2}\right)}{\sqrt{2}}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{4}-\frac{FC\left(2\right)}{8}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{4}-\frac{FC\left(2\right)}{8}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $0$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Tabular
+<lyxtabular version="3" rows="2" columns="4">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{6}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $0$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{FS\left(2\right)}{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $-\frac{1}{2}+\frac{FC\left(2\sqrt{2}\right)}{4\sqrt{2}}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $-\frac{FS\left(2\right)}{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{4}-\frac{FC\left(2\sqrt{2}\right)}{8\sqrt{2}}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{4}-\frac{FC\left(2\sqrt{2}\right)}{8\sqrt{2}}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $0$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+5
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Tabular
+<lyxtabular version="3" rows="2" columns="4">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{6}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{4\pi}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{4\pi}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $-\frac{1}{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $-\frac{1}{2\pi}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{4}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{4}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $0$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+6
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Tabular
+<lyxtabular version="3" rows="2" columns="4">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{6}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $0$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{FS\left(2\sqrt{2}\right)}{2\sqrt{2}}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $-\frac{1}{2}+\frac{FC\left(4\right)}{8}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $-\frac{FS\left(2\sqrt{2}\right)}{2\sqrt{2}}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{4}-\frac{FC\left(4\right)}{16}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{4}-\frac{FC\left(4\right)}{16}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $0$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Signatures of the sin paths up to level 3
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:Levelupto3Sins"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+
+\size scriptsize
+\begin_inset Tabular
+<lyxtabular version="3" rows="7" columns="3">
+<features tabularvalignment="middle">
+<column alignment="right" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="right" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+Level
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+Path
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+Signature
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Tabular
+<lyxtabular version="3" rows="4" columns="4">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{24}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{2}{\pi^{3}}-\frac{1}{2\pi}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{6}{\pi^{3}}-\frac{1}{2\pi}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{2}{\pi^{2}}-\frac{1}{4}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{2\pi}-\frac{6}{\pi^{3}}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{8}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{4}-\frac{2}{\pi^{2}}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $-\frac{2}{9\pi}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{2\pi}-\frac{2}{\pi^{3}}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $-\frac{2}{\pi^{2}}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{8}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $-\frac{2}{3\pi}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{2}{\pi^{2}}-\frac{1}{4}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{2}{3\pi}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{2}{9\pi}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $0$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Tabular
+<lyxtabular version="3" rows="4" columns="4">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{24}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{4\pi}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $-\frac{1}{4\pi}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $-\frac{1}{4}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $-\frac{1}{4\pi}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{8}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{4}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $0$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{4\pi}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $0$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{8}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $0$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $-\frac{1}{4}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $0$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $0$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $0$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Tabular
+<lyxtabular version="3" rows="4" columns="4">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{24}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $-\frac{FC\left(\sqrt{2}\right)}{4\sqrt{2}\pi}-\frac{1}{4\pi}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $-\frac{3FC\left(\sqrt{2}\right)}{4\sqrt{2}\pi}-\frac{FS\left(\sqrt{2}\right)}{2\sqrt{2}}+\frac{5}{4\pi}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{FS\left(\sqrt{2}\right)^{2}}{4}-\frac{1}{4}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{3FC\left(\sqrt{2}\right)}{4\sqrt{2}\pi}-\frac{1}{4\pi}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{8}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $-\frac{FC(2)}{8}-\frac{FS\left(\sqrt{2}\right)^{2}}{4}+\frac{1}{4}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{FS\left(\sqrt{6}\right)}{24\sqrt{6}}-\frac{FS\left(\sqrt{2}\right)}{8\sqrt{2}}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{FC\left(\sqrt{2}\right)}{4\sqrt{2}\pi}+\frac{FS\left(\sqrt{2}\right)}{2\sqrt{2}}-\frac{3}{4\pi}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{FS\left(\sqrt{2}\right)^{2}}{4}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{8}-\frac{FC(2)}{8}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{FS\left(\sqrt{6}\right)}{8\sqrt{6}}-\frac{3FS\left(\sqrt{2}\right)}{8\sqrt{2}}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{FC(2)}{4}+\frac{FS\left(\sqrt{2}\right)^{2}}{4}-\frac{1}{4}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{3FS\left(\sqrt{2}\right)}{8\sqrt{2}}-\frac{FS\left(\sqrt{6}\right)}{8\sqrt{6}}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{FS\left(\sqrt{2}\right)}{8\sqrt{2}}-\frac{FS\left(\sqrt{6}\right)}{24\sqrt{6}}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $0$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Tabular
+<lyxtabular version="3" rows="4" columns="4">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{24}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{8\pi}-\frac{FC(2)}{16\pi}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $-\frac{3FC(2)}{16\pi}-\frac{FS(2)}{4}+\frac{3}{8\pi}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{FS(2)^{2}}{8}-\frac{1}{4}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{3FC(2)}{16\pi}-\frac{3}{8\pi}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{8}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $-\frac{FC\left(2\sqrt{2}\right)}{8\sqrt{2}}-\frac{FS(2)^{2}}{8}+\frac{1}{4}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{FS\left(2\sqrt{3}\right)}{48\sqrt{3}}-\frac{FS(2)}{16}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{FC(2)}{16\pi}+\frac{FS(2)}{4}-\frac{1}{8\pi}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $-\frac{FS(2)^{2}}{8}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{8}-\frac{FC\left(2\sqrt{2}\right)}{8\sqrt{2}}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{FS\left(2\sqrt{3}\right)}{16\sqrt{3}}-\frac{3FS(2)}{16}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{FC\left(2\sqrt{2}\right)}{4\sqrt{2}}+\frac{FS(2)^{2}}{8}-\frac{1}{4}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{3FS(2)}{16}-\frac{FS\left(2\sqrt{3}\right)}{16\sqrt{3}}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{FS(2)}{16}-\frac{FS\left(2\sqrt{3}\right)}{48\sqrt{3}}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $0$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+5
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Tabular
+<lyxtabular version="3" rows="4" columns="4">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{24}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{8\pi}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $-\frac{1}{8\pi}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $-\frac{1}{4}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $-\frac{1}{8\pi}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{8}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{4}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $0$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{8\pi}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $0$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{8}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $0$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $-\frac{1}{4}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $0$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $0$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $0$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+6
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Tabular
+<lyxtabular version="3" rows="4" columns="4">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{24}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{16\pi}-\frac{FC\left(2\sqrt{2}\right)}{32\sqrt{2}\pi}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $-\frac{3FC\left(2\sqrt{2}\right)}{32\sqrt{2}\pi}-\frac{FS\left(2\sqrt{2}\right)}{4\sqrt{2}}+\frac{3}{16\pi}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{FS\left(2\sqrt{2}\right)^{2}}{16}-\frac{1}{4}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{3FC\left(2\sqrt{2}\right)}{32\sqrt{2}\pi}-\frac{3}{16\pi}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{8}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $-\frac{FC(4)}{16}-\frac{1}{16}FS\left(2\sqrt{2}\right)^{2}+\frac{1}{4}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{FS\left(2\sqrt{6}\right)}{48\sqrt{6}}-\frac{FS\left(2\sqrt{2}\right)}{16\sqrt{2}}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{FC\left(2\sqrt{2}\right)}{32\sqrt{2}\pi}+\frac{FS\left(2\sqrt{2}\right)}{4\sqrt{2}}-\frac{1}{16\pi}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $-\frac{1}{16}FS\left(2\sqrt{2}\right)^{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{1}{8}-\frac{FC(4)}{16}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{FS\left(2\sqrt{6}\right)}{16\sqrt{6}}-\frac{3FS\left(2\sqrt{2}\right)}{16\sqrt{2}}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{FC(4)}{8}+\frac{FS\left(2\sqrt{2}\right)^{2}}{16}-\frac{1}{4}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{3FS\left(2\sqrt{2}\right)}{16\sqrt{2}}-\frac{FS\left(2\sqrt{6}\right)}{16\sqrt{6}}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $\frac{FS\left(2\sqrt{2}\right)}{16\sqrt{2}}-\frac{FS\left(2\sqrt{6}\right)}{48\sqrt{6}}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset Formula $0$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Signatures of the sin paths - level 4
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:Level4Sins"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Of special interest is the signature of a line segment described by:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\left\{ \alpha_{1}+\beta_{1}\cdot t,\alpha_{2}+\beta_{2}\cdot t,\ldots,\alpha_{d}+\beta_{d}\cdot t\right\} 
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Over the domain 
+\begin_inset Formula $t\in\left[a,b\right]$
+\end_inset
+
+.
+ If some paths exhibit high-frequency components that force us to dig deeper
+ to find the information that describes the path, a line segment reveals
+ itself on the first level:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\left\{ b_{1}\cdot\left(b-a\right),b_{2}\cdot\left(b-a\right),\ldots,b_{d}\cdot\left(b-a\right)\right\} 
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+All levels are defined by:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+S\left(X\right)_{a,b}^{i_{1},...,i_{k}}=\frac{\beta_{i_{1}}\cdot\beta_{i_{2}}\cdot\ldots\cdot\beta_{i_{k}}\cdot\left(b-a\right)}{k!}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Properties
+\end_layout
+
+\begin_layout Subsubsection
+Translation invariance
+\end_layout
+
+\begin_layout Subsubsection
+Reparametrization
+\end_layout
+
+\begin_layout Subsection
+Shuffle product
+\end_layout
+
+\begin_layout Subsection
+Chen's Identity
+\end_layout
+
+\begin_layout Section
+Core signatures
+\end_layout
+
+\begin_layout Subsection
+Log signatures
+\end_layout
+
+\begin_layout Standard
+New table
+\end_layout
+
+\begin_layout Subsection
+Shuffle products
+\end_layout
+
+\begin_layout Subsection
+Solving the systems
+\end_layout
+
+\begin_layout Standard
+Using tick we simulate 100 paths for different end times (100, 1000, 10000)
+ for both the builtin 
+\shape italic
+ExpKernel
+\shape default
+ and for a user-defined Time Function that mirrors an 
+\shape italic
+ExpKernel
+\shape default
+:
+\end_layout
+
+\begin_layout Standard
+We use 
+\shape italic
+minimize
+\shape default
+ from 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "embedding"
+literal "false"
+
+\end_inset
+
+ with method 
+\color red
+'SLSQP'
+\color inherit
+; as pointed out in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Kisel 2017"
+literal "false"
+
+\end_inset
+
+, it can handle both bounds (ensuring positivity of parameters) and constraints
+ (ensuring the stationarity condition).
+ The differences should be calculated at the start of the optimization process
+ and passed to the likelihood function instead of being calculated inside
+ the likelihood function.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float algorithm
+wide false
+sideways false
+status open
+
+\begin_layout LyX-Code
+def 
+\begin_inset Formula $ll\left(\theta,ts,\Delta ts,\delta ts\right)$
+\end_inset
+
+:
+\end_layout
+
+\begin_deeper
+\begin_layout LyX-Code
+\begin_inset Formula $\left\{ \lambda_{0},\alpha,\beta\right\} =\theta$
+\end_inset
+
+ parameters are defined as one argument for the optimization
+\end_layout
+
+\begin_layout LyX-Code
+\begin_inset Formula $ts$
+\end_inset
+
+ is one of the 
+\shape italic
+SimuHawkesMulti.timestamps
+\end_layout
+
+\begin_layout LyX-Code
+\begin_inset Formula $\Delta ts$
+\end_inset
+
+ is 
+\begin_inset Formula $ts_{i}-ts_{i-1}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout LyX-Code
+\begin_inset Formula $\delta ts$
+\end_inset
+
+ is 
+\begin_inset Formula $ts_{N}-ts_{i-1}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout LyX-Code
+Define 
+\begin_inset Formula $R$
+\end_inset
+
+ as an array of zeros with the same size as 
+\begin_inset Formula $ts$
+\end_inset
+
+
+\end_layout
+
+\begin_layout LyX-Code
+Keep its first element 
+\begin_inset Formula $R_{1}=0$
+\end_inset
+
+
+\end_layout
+
+\begin_layout LyX-Code
+Calculate 
+\begin_inset Formula $R_{i}=\exp\left(-\beta\cdot\Delta ts_{i-1}\right)\cdot\left(1+R_{i-1}\right)$
+\end_inset
+
+ recursively for 
+\begin_inset Formula $i>1$
+\end_inset
+
+
+\end_layout
+
+\begin_layout LyX-Code
+Return:
+\end_layout
+
+\begin_layout LyX-Code
+\begin_inset Formula $-\left[ts_{N}\cdot\left(1-\lambda_{0}\right)-\left(\frac{\alpha}{\beta}\right)\cdot\sum_{\delta ts}\left(1-\exp\left(-\beta\cdot\delta ts\right)\right)+\sum_{R_{i}}\left(\log\left(\lambda_{0}+\alpha\cdot R_{i}\right)\right)\right]$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+----------------------------------------------------------------------------
+\end_layout
+
+\end_deeper
+\begin_layout LyX-Code
+Minimize 
+\begin_inset Formula $ll\left(\theta,ts,\Delta ts,\delta ts\right)$
+\end_inset
+
+ with:
+\end_layout
+
+\begin_deeper
+\begin_layout LyX-Code
+bounds on 
+\begin_inset Formula $\lambda_{0},\alpha,\beta$
+\end_inset
+
+ (all must be positive) and
+\end_layout
+
+\begin_layout LyX-Code
+constraint 
+\begin_inset Formula $\alpha<\beta$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Negative Log-Likelihood and its minimization with scipy's minimize
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Dimensionality
+\end_layout
+
+\begin_layout Standard
+Even with the latency 
+\begin_inset Formula $\tau=0$
+\end_inset
+
+, for each 
+\begin_inset Formula $t_{i}$
+\end_inset
+
+ we pass 
+\begin_inset Formula $t_{i-1}$
+\end_inset
+
+.
+ But this enough to slow down the optimization, as observed while testing
+ that the algorithm returns the same results as the previous one for latency
+ zero and seen in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:Learning-results-and"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+We obtain the following results for 100 paths (parameters 
+\begin_inset Formula $\lambda_{0}=1.20$
+\end_inset
+
+ , 
+\begin_inset Formula $\alpha=0.60$
+\end_inset
+
+ and 
+\begin_inset Formula $\beta=0.80$
+\end_inset
+
+) with the total running times in seconds (on a MacBook Pro 16-inch 2019,
+ 2.4 GHz 8-core Intel Core i9, 64 GB 2667 MHz DDR4 RAM):
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="13" columns="7">
+<features tabularvalignment="middle">
+<column alignment="right" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="decimal" decimal_point="." valignment="top">
+<column alignment="decimal" decimal_point="." valignment="top">
+<column alignment="decimal" decimal_point="." valignment="top">
+<column alignment="decimal" decimal_point="." valignment="top">
+<row>
+<cell alignment="right" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+End Time
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Kernel
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Algorithm
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="decimal" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+runtime (s)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="decimal" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\lambda_{0}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="decimal" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\alpha$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="decimal" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\beta$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="right" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+100
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Builtin
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+ll
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="decimal" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.535
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="decimal" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1.40
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="decimal" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.59
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="decimal" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.87
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+100
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Builtin
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+lllat
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1.49
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1.40
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.59
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.87
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="right" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+100
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Custom
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+ll
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="decimal" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.521
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="decimal" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1.41
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="decimal" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.63
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="decimal" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.88
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+100
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Custom
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+lllat
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1.6
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1.41
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.63
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.88
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="right" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1000
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Builtin
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+ll
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="decimal" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.992
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="decimal" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1.22
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="decimal" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.60
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="decimal" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.80
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1000
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Builtin
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+lllat
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+11.3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1.22
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.60
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.80
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="right" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1000
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Custom
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+ll
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="decimal" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1.13
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="decimal" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1.23
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="decimal" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.63
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="decimal" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.81
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1000
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Custom
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+lllat
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+12.8
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1.23
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.63
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.81
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="right" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+10000
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Builtin
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+ll
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="decimal" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+6.02
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="decimal" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1.20
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="decimal" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.60
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="decimal" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.80
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+10000
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Builtin
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+lllat
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+143.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1.20
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.60
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.80
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="right" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+10000
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Custom
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+ll
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="decimal" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+7.29
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="decimal" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1.20
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="decimal" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.62
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="decimal" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.80
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+10000
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Custom
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+lllat
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+181.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1.20
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.62
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.80
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Learning results and times
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:Learning-results-and"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+With latency 
+\begin_inset Formula $\tau=2$
+\end_inset
+
+, we find that we can still recover the parameters of the kernel quite well
+ (still 100 paths):
+\end_layout
+
+\begin_layout Section
+Inversion of Core Signatures
+\end_layout
+
+\begin_layout Subsection
+Chen's Identity for two pieces
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float algorithm
+wide false
+sideways false
+status open
+
+\begin_layout LyX-Code
+def 
+\begin_inset Formula $lllatm\left(\theta,m,nts,t_{N}^{m},\Delta t,\delta t,\tau t\right)$
+\end_inset
+
+:
+\end_layout
+
+\begin_deeper
+\begin_layout LyX-Code
+\begin_inset Formula $\left\{ \lambda_{0_{1}},\lambda_{0_{2}},\ldots,\lambda_{0_{M}},\alpha^{1,1},\alpha^{1,2},\ldots,\alpha^{1,M},\ldots,\alpha^{M,M},\beta^{1,1},\beta^{1,2},\ldots,\beta^{1,M},\ldots,\beta^{M,M}\right\} =\theta$
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout LyX-Code
+parameters are defined as one argument for the optimization
+\end_layout
+
+\begin_layout LyX-Code
+\begin_inset Formula $m$
+\end_inset
+
+ is the index of the time series in the 
+\shape italic
+timestamps
+\shape default
+ object
+\end_layout
+
+\begin_layout LyX-Code
+\begin_inset Formula $nts$
+\end_inset
+
+ is the array of lengths of all the time series of
+\end_layout
+
+\begin_deeper
+\begin_layout LyX-Code
+the 
+\shape italic
+timestamps object
+\end_layout
+
+\end_deeper
+\begin_layout LyX-Code
+\begin_inset Formula $t_{N}^{m}$
+\end_inset
+
+ is the last timestamp in all of the time series of
+\end_layout
+
+\begin_deeper
+\begin_layout LyX-Code
+the 
+\shape italic
+timestamps object
+\end_layout
+
+\end_deeper
+\begin_layout LyX-Code
+\begin_inset Formula $\Delta t$
+\end_inset
+
+ is the collection of series 
+\begin_inset Formula $t_{i}^{m}-t_{i-1}^{m}$
+\end_inset
+
+ for all 
+\begin_inset Formula $1\leq m\leq M$
+\end_inset
+
+ including 
+\begin_inset Formula $t_{1}^{m}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout LyX-Code
+\begin_inset Formula $\delta t$
+\end_inset
+
+ is the collection of collections of series 
+\begin_inset Formula $t_{N}^{m}-\tau-t_{i-1}^{n}$
+\end_inset
+
+ 
+\end_layout
+
+\begin_deeper
+\begin_layout LyX-Code
+for all 
+\begin_inset Formula $1\leq m\leq M$
+\end_inset
+
+ and 
+\begin_inset Formula $1\leq n\leq M$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout LyX-Code
+\begin_inset Formula $\tau t$
+\end_inset
+
+ is the collection of collections of series of arrays 
+\begin_inset Formula $t_{i}^{m}-\tau-t_{k}^{n}$
+\end_inset
+
+ 
+\end_layout
+
+\begin_deeper
+\begin_layout LyX-Code
+for all 
+\begin_inset Formula $t_{k}^{n}$
+\end_inset
+
+ such that 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $t_{i-1}^{m}-\tau\leq t_{k}^{n}<t_{i}^{m}-\tau$
+\end_inset
+
+
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+ for all 
+\begin_inset Formula $1\leq m\leq M$
+\end_inset
+
+ and 
+\begin_inset Formula $1\leq n\leq M$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout LyX-Code
+For each n:
+\end_layout
+
+\begin_deeper
+\begin_layout LyX-Code
+Define 
+\begin_inset Formula $R^{m,n}$
+\end_inset
+
+ as an array of zeros with the same size as 
+\begin_inset Formula $t^{m}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout LyX-Code
+Keep its first element 
+\begin_inset Formula $R_{1}^{m,n}=0$
+\end_inset
+
+
+\end_layout
+
+\begin_layout LyX-Code
+Calculate 
+\begin_inset Formula $R_{i}^{m,n}=\exp\left(-\beta^{m,n}\cdot\Delta t_{i}^{m}\right)\cdot R_{i-1}^{m,n}+\sum_{\tau t_{i}}\left(\exp\left(-\beta^{m,n}\cdot\tau t_{i}^{m,n}\right)\right)$
+\end_inset
+
+ 
+\end_layout
+
+\begin_deeper
+\begin_layout LyX-Code
+recursively for 
+\begin_inset Formula $i>1$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout LyX-Code
+Return:
+\end_layout
+
+\begin_layout LyX-Code
+\begin_inset Formula 
+\begin{align*}
+-\left[t_{N}^{m}\cdot\left(1-\lambda_{0}^{m}\right)-\sum_{\delta t}\left(\left(\frac{\alpha^{m,n}}{\beta^{m,n}}\right)\cdot\left(1-\exp\left(-\beta^{m,n}\cdot\delta t^{m,n}\right)\right)\right)\right]\\
+-\left[+\sum_{R_{i}}\left(\log\left(\lambda_{0}^{m}+\alpha^{m,n}\cdot R_{i}^{m,n}\right)\right)\right]
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+----------------------------------------------------------------------------
+\end_layout
+
+\end_deeper
+\begin_layout LyX-Code
+Minimize 
+\begin_inset Formula $lllatm\left(\theta,m,nts,t_{N}^{m},\Delta t,\delta t,\tau t\right)$
+\end_inset
+
+ with:
+\end_layout
+
+\begin_deeper
+\begin_layout LyX-Code
+bounds on 
+\begin_inset Formula $\lambda_{0},\alpha,\beta$
+\end_inset
+
+ (all must be positive)
+\end_layout
+
+\begin_layout LyX-Code
+no constraints for just m
+\end_layout
+
+\end_deeper
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Log-likelihood with latency - multidimensional for one time series m
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Adversarial Cases
+\end_layout
+
+\begin_layout Subsection
+Chen's Identity for three pieces
+\end_layout
+
+\begin_layout Standard
+A slower optimization can be done for more than one time series in parallel,
+ with the advantage of enforcing symmetries on coefficients by re-defining
+ the input 
+\begin_inset Formula $\theta$
+\end_inset
+
+ with the same decays for blocks (e.g.
+ on 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Bacry et al 2016"
+literal "false"
+
+\end_inset
+
+ instead of 16 different decays we can use 4 decays, as described further
+ down the paper); the algorithm below shows the case where we optimize it
+ for all the time series, but we can modify it to run on bid-ask pairs of
+ time series.
+\end_layout
+
+\begin_layout Subsection
+More than three pieces
+\end_layout
+
+\begin_layout Standard
+With latency 
+\begin_inset Formula $\tau=2$
+\end_inset
+
+ and two kernels we get good results (100 paths, method 
+\color red
+'SLSQP'
+\color inherit
+):
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="12">
+<features tabularvalignment="middle">
+<column alignment="right" valignment="top">
+<column alignment="decimal" decimal_point="." valignment="top">
+<column alignment="decimal" decimal_point="." valignment="top">
+<column alignment="decimal" decimal_point="." valignment="top">
+<column alignment="decimal" decimal_point="." valignment="top">
+<column alignment="decimal" decimal_point="." valignment="top">
+<column alignment="decimal" decimal_point="." valignment="top">
+<column alignment="decimal" decimal_point="." valignment="top">
+<column alignment="decimal" decimal_point="." valignment="top">
+<column alignment="decimal" decimal_point="." valignment="top">
+<column alignment="decimal" decimal_point="." valignment="top">
+<column alignment="decimal" decimal_point="." valignment="top">
+<row>
+<cell alignment="right" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+End Time
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="decimal" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+runtime(s)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="decimal" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\lambda_{0}^{1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\lambda_{0}^{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="decimal" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\alpha^{1,1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\alpha^{1,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\alpha^{2,1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\alpha^{2,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="decimal" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\beta^{1,1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\beta^{1,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\beta^{2,1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\beta^{2,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multicolumn="1" alignment="right" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Simulated
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.6
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.5
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.7
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.9
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1.4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1.8
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1.0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="right" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+100
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="decimal" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+7.1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="decimal" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.68
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.28
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="decimal" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.55
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.73
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1.03
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.37
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="decimal" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1.87
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1.93
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.44
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.65
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="right" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1000
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="decimal" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+67.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="decimal" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.63
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.21
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="decimal" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.52
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.75
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.98
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.31
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="decimal" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1.44
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1.78
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.18
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1.05
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="right" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+10000
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="decimal" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+804.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="decimal" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.60
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.20
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="decimal" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.52
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.75
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.97
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.31
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="decimal" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1.37
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1.76
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.12
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1.00
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Learning results and times for latency 
+\begin_inset Formula $\tau=2$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Term structures in finance
+\end_layout
+
+\begin_layout Subsection
+Interest rates
+\end_layout
+
+\begin_layout Standard
+Here one must consider the latency of 
+\begin_inset Formula $250\mu s$
+\end_inset
+
+ (as informed in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "log signatures"
+literal "false"
+
+\end_inset
+
+):
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename ../My Papers/UZModelUncertainty/HawkesWithLatency/LatencyEurex.png
+	lyxscale 30
+	scale 30
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Eurex Latency
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Volatility
+\end_layout
+
+\begin_layout Section
+Conclusions
+\end_layout
+
+\begin_layout Standard
+We show (with formulas and code) how to simulate and estimate exponential
+ kernels of Hawkes processes with a latency, and interpreted the results
+ of applying this method to a (limited) set of BUND futures data.
+ We show how some features of this model (the 
+\begin_inset Formula $P\rightarrow P$
+\end_inset
+
+ kernels and parameter symmetries) might be quite universal in markets.
+ We can also extend this approach to two related securities that trade in
+ different markets by using different latencies on the cross-market kernels
+ without changing the model.
+\end_layout
+
+\begin_layout Standard
+We would like to thank Mathieu Rosenbaum (CMAP) for the guidance and Sebastian
+ Neusuess (Eurex) for the latency data.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+label "Chevryev and Kormilitzin (2016)"
+key "Primer"
+literal "false"
+
+\end_inset
+
+Chevyrev, I., and Kormilitzin, A.
+ (2016), 
+\begin_inset Quotes eld
+\end_inset
+
+A Primer on the Signature Method in Machine Learning
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset CommandInset href
+LatexCommand href
+name "arXiv:1603.03788"
+target "https://arxiv.org/abs/1603.03788"
+literal "false"
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+label "Fermanian (2021a)"
+key "Fermanian_Thesis"
+literal "false"
+
+\end_inset
+
+Fermanian, Adeline (2021a) 
+\begin_inset Quotes eld
+\end_inset
+
+Learning time-dependent data with the signature transform
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset CommandInset href
+LatexCommand href
+name "PhD Thesis at Sorbonne Université LSPM"
+target "https://theses.hal.science/tel-03507274"
+literal "false"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+label "Fermanian (2021b)"
+key "embedding"
+literal "false"
+
+\end_inset
+
+Fermanian, Adeline (2021b) 
+\begin_inset Quotes eld
+\end_inset
+
+Embedding and learning with signatures
+\begin_inset Quotes erd
+\end_inset
+
+, Computational Statistics & Data Analysis, Volume 157, May 2021, 107148,
+ 
+\begin_inset CommandInset href
+LatexCommand href
+name "https://doi.org/10.1016/j.csda.2020.107148"
+target "https://doi.org/10.1016/j.csda.2020.107148"
+literal "false"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+label "Fermanian et al (2023)"
+key "inversion"
+literal "false"
+
+\end_inset
+
+Adeline Fermanian and Jiawei Chang and Terry Lyons and Gérard Biau (2023)
+ 
+\begin_inset Quotes eld
+\end_inset
+
+The insertion method to invert the signature of a path
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset CommandInset href
+LatexCommand href
+name "arXiv:2304.01862v2"
+target "https://arxiv.org/abs/2304.01862v2"
+literal "false"
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+label "Reizenstein (2015)"
+key "log signatures"
+literal "false"
+
+\end_inset
+
+Reizenstein, J.
+ (2015), 
+\begin_inset Quotes eld
+\end_inset
+
+Calculation of Iterated-Integral Signatures and Log Signatures
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset CommandInset href
+LatexCommand href
+name "arXiv:1712.02757v1"
+target "https://arxiv.org/abs/1712.02757v1"
+literal "false"
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+label "Reizenstein (2016)"
+key "iisignature CRISM"
+literal "false"
+
+\end_inset
+
+Reizenstein, J.
+ (2016), 
+\begin_inset Quotes eld
+\end_inset
+
+Calculation of signatures - CRISM workshop: Statistics for Differential
+ Equations Driven by Rough Paths
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset CommandInset href
+LatexCommand href
+name "Presentation"
+target "https://warwick.ac.uk/fac/cross_fac/complexity/people/students/dtc/students2013/reizenstein/2016_crism_sep_computation_of_signatures.pdf"
+literal "false"
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+label "Reizenstein (2018)"
+key "iisignature"
+literal "false"
+
+\end_inset
+
+Reizenstein, J.
+ (2018), 
+\begin_inset Quotes eld
+\end_inset
+
+The iisignature library: efficient calculation of iterated-integral signatures
+ and log signatures 
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset CommandInset href
+LatexCommand href
+name "arXiv:1802.08252v1"
+target "https://arxiv.org/abs/1802.08252v1"
+literal "false"
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+label "Reizenstein and Graham (2020)"
+key "iisignature 1004"
+literal "false"
+
+\end_inset
+
+Reizenstein, J.
+ and Graham, B.
+ (2020), 
+\begin_inset Quotes eld
+\end_inset
+
+Algorithm 1004: The Iisignature Library: Efficient Calculation of Iterated-Integ
+ral Signatures and Log Signatures
+\begin_inset Quotes erd
+\end_inset
+
+, ACM Trans.
+ Math.
+ Softw.
+ 46, 1, Article 8 (March 2020), 
+\begin_inset CommandInset href
+LatexCommand href
+name "https://doi.org/10.1145/3371237"
+target "https://doi.org/10.1145/3371237"
+literal "false"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+label "Lyons et al (2007)"
+key "Lyons"
+literal "false"
+
+\end_inset
+
+Lyons, T.
+ J., Caruana, M., and Lévy, T (2007).
+ 
+\begin_inset Quotes eld
+\end_inset
+
+Differential equations driven by rough paths
+\begin_inset Quotes erd
+\end_inset
+
+, volume 1908 of Lecture Notes in Mathematics.
+ Springer, Berlin, 2007
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+label "Améndola, Friz and Sturmfels (2019)"
+key "varieties"
+literal "false"
+
+\end_inset
+
+Améndola, C., Friz, P.
+ and Sturmfels, B.
+ (2019).
+ 
+\begin_inset Quotes eld
+\end_inset
+
+Varieties of Signature Tensors
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset CommandInset href
+LatexCommand href
+name "arXiv:1804.08325v3"
+target "https://arxiv.org/abs/1804.08325v3"
+literal "false"
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+label "Pfeffer, Seigal and Sturmfels (2018)"
+key "learning"
+literal "false"
+
+\end_inset
+
+Pfeffer, M., Seigal, A.
+ and Sturmfels, B.
+ (2018).
+ 
+\begin_inset Quotes eld
+\end_inset
+
+Learning Paths from Signature Tensors
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset CommandInset href
+LatexCommand href
+name "arXiv:1809.01588v2"
+target "https://arxiv.org/abs/1809.01588v2"
+literal "false"
+
+\end_inset
+
+ 
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Part*
+\start_of_appendix
+Appendix
+\end_layout
+
+\begin_layout Section
+Appendix
+\end_layout
+
+\begin_layout Standard
+The charts and tables for the daily estimates are below.
+ The only real worry is the instability of the parameters of the 
+\begin_inset Formula $T\rightarrow T$
+\end_inset
+
+ kernels, although the intensities 
+\begin_inset Formula $\frac{\alpha}{\beta}$
+\end_inset
+
+ are stable.
+ The upper bound for 
+\begin_inset Formula $\beta\left(T\rightarrow T\right)$
+\end_inset
+
+ was hit on day 16.
+\end_layout
+
+\end_body
+\end_document
