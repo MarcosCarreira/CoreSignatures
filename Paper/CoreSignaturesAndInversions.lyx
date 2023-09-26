@@ -16,6 +16,26 @@
 \rfoot{}
 \renewcommand{\headrulewidth}{0pt}
 \usepackage{indentfirst}
+\makeatletter
+\providecommand*{\shuffle}{%
+  \mathbin{\mathpalette\shuffle@{}}%
+}
+\newcommand*{\shuffle@}[2]{%
+  % #1: math style
+  % #2: unused
+  \sbox0{$#1\vcenter{}$}%
+  \kern .15\ht0 % side bearing
+  \rlap{\vrule height .25\ht0 depth 0pt width 2.5\ht0}%
+  \raise.1\ht0\hbox to 2.5\ht0{%
+    \vrule height 1.75\ht0 depth -.1\ht0 width .17\ht0 %
+    \hfill
+    \vrule height 1.75\ht0 depth -.1\ht0 width .17\ht0 %
+    \hfill
+    \vrule height 1.75\ht0 depth -.1\ht0 width .17\ht0 %
+  }%
+  \kern .15\ht0 % side bearing
+}
+\makeatother
 \end_preamble
 \use_default_options true
 \maintain_unincluded_children false
@@ -370,6 +390,28 @@ literal "false"
 ess as those two papers, we think they are practical enough to be useful
  for signatures coming from more general paths, as we hope to show.
  Further work linking our results to these papers is probably worth pursuing.
+\end_layout
+
+\begin_layout Standard
+Section 2 (Signatures) will describe signatures and provide plenty of examples;
+ the idea is for the reader to become familiar with the structure of the
+ signatures.
+\end_layout
+
+\begin_layout Standard
+Section 3 (Core Signatures) will describe how to find which terms of the
+ signature are independent (and therefore store the information about the
+ path) and how the other terms depend on these core terms.
+\end_layout
+
+\begin_layout Standard
+Section 4 will describe an inversion procedure where we approximate a path
+ with linear segments which possess the same signature at increasing levels.
+\end_layout
+
+\begin_layout Standard
+Section 5 will discuss an application of signatures - term structure modeling
+ in finance.
 \end_layout
 
 \begin_layout Section
@@ -5527,20 +5569,296 @@ Properties
 Translation invariance
 \end_layout
 
-\begin_layout Subsubsection
-Reparametrization
+\begin_layout Standard
+From the definition of the signature of a line segment, we can see that
+ we lost information about the initial level; the signature encoded the
+ shape of the path but not the initial location.
+ This is helpful for the composition of the paths, but it also means that
+ we will need to keep the initial value stored outside the signature.
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Subsubsection
 Shuffle product
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Standard
+Let's start with the formal definitions (and some informal definitions as
+ well):
+\end_layout
+
+\begin_layout Standard
+A 
+\begin_inset Formula $\left(a,b\right)$
+\end_inset
+
+-shuffle of a set with size 
+\begin_inset Formula $a+b$
+\end_inset
+
+ is a permutation that keeps the relative order of the two blocks with sizes
+ 
+\begin_inset Formula $a$
+\end_inset
+
+ and 
+\begin_inset Formula $b$
+\end_inset
+
+ of the set.
+ We can also talk about one of the shuffles of the blocks 
+\begin_inset Formula $A$
+\end_inset
+
+ and 
+\begin_inset Formula $B$
+\end_inset
+
+ to describe the same thing.
+\end_layout
+
+\begin_layout Standard
+So given 
+\begin_inset Formula $\left\{ 1,2\right\} $
+\end_inset
+
+ and 
+\begin_inset Formula $\left\{ 3,4\right\} $
+\end_inset
+
+ as the two pieces of the set, 
+\begin_inset Formula $\left\{ 1,3,2,4\right\} $
+\end_inset
+
+ is a valid shuffle; 
+\begin_inset Formula $\left\{ 3,1,2,4\right\} $
+\end_inset
+
+ is a valid shuffle as well; but 
+\begin_inset Formula $\left\{ 2,1,3,4\right\} $
+\end_inset
+
+ is not a valid shuffle.
+ This example uses different values to make it easier to see the relative
+ positions, but it's all about the relative positions.
+\end_layout
+
+\begin_layout Standard
+Consider two multi-indexes 
+\begin_inset Formula $I$
+\end_inset
+
+ and 
+\begin_inset Formula $J$
+\end_inset
+
+ with sizes 
+\begin_inset Formula $k_{i}$
+\end_inset
+
+ and 
+\begin_inset Formula $k_{j}$
+\end_inset
+
+, respectively:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+I=\left\{ i_{1},i_{2},\ldots,i_{k_{i}}\right\} 
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+J=\left\{ j_{1},j_{2},\ldots,j_{k_{j}}\right\} 
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+For 
+\begin_inset Formula $d=2$
+\end_inset
+
+ an example is:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+I=\left\{ 1,2\right\} 
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+J=\left\{ 2,1\right\} 
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We define the shuffle product of 
+\begin_inset Formula $I$
+\end_inset
+
+ and 
+\begin_inset Formula $J$
+\end_inset
+
+ (
+\begin_inset Formula $I\shuffleJ$
+\end_inset
+
+) as the set of all multi-indexes of length 
+\begin_inset Formula $k_{i}+k_{j}$
+\end_inset
+
+ that are valid shuffles of 
+\begin_inset Formula $I$
+\end_inset
+
+ and 
+\begin_inset Formula $J$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+In our example:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $I\shuffle\left\{ 3\right\} =\left\{ \left\{ 1,2,3\right\} ,\left\{ 1,3,2\right\} ,\left\{ 3,1,2\right\} \right\} $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $I\shuffle\left\{ 3,4\right\} =\left\{ \left\{ 1,2,3,4\right\} ,\left\{ 1,3,2,4\right\} ,\left\{ 1,3,4,2\right\} ,\left\{ 3,1,2,4\right\} ,\left\{ 3,1,4,2\right\} ,\left\{ 3,4,1,2\right\} \right\} $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $I\shuffle J=\left\{ \left\{ 1,2,2,1\right\} ,\left\{ 1,2,2,1\right\} ,\left\{ 1,2,1,2\right\} ,\left\{ 2,1,2,1\right\} ,\left\{ 2,1,1,2\right\} ,\left\{ 2,1,1,2\right\} \right\} $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+There are many ways to generate these shuffles (
+\begin_inset CommandInset href
+LatexCommand href
+name "Shuffle product of two lists (Mathematica Stack Exchange)"
+target "https://mathematica.stackexchange.com/questions/41614/shuffle-product-of-two-lists"
+literal "false"
+
+\end_inset
+
+).
+ We will use the top answer, which uses the recursive properties below (
+\begin_inset Formula $\varepsilon$
+\end_inset
+
+ is the empty list, a and b are single elements, u and v are arbitrary lists),
+ but inverted (the single element comes first in the function):
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $u\shuffle\varepsilon=u\shuffle\varepsilon=u$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $ua\shuffle vb=\left(u\shuffle vb\right)a+\left(ua\shuffle v\right)b$
+\end_inset
+
+
+\begin_inset Float algorithm
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset listings
+lstparams "breaklines=true"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+shp[u:{a_,x___}, v:{b_, y___}, c___]:=
+\end_layout
+
+\begin_layout Plain Layout
+
+  Join[shp[{x}, v, c, a], shp[u, {y}, c, b]];
+\end_layout
+
+\begin_layout Plain Layout
+
+shp[{x___}, {y___}, c___] := {{c, x, y}} ;
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+The shuffle product function
+\begin_inset CommandInset label
+LatexCommand label
+name "alg:Shuffle-product"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
 Chen's Identity
 \end_layout
 
 \begin_layout Section
-Core signatures
+Core Signatures
 \end_layout
 
 \begin_layout Subsection
