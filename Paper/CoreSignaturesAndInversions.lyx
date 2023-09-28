@@ -15006,7 +15006,7 @@ Solution 2 (without Eq #4)
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $\frac{2\left(3z_{2}z_{1,1,2}-2z_{1,2}^{2}\right)}{z_{1}^{2}\left(z_{1}z_{2}-2z_{1,2}\right)+6z_{1}z_{1,1,2}-2z_{1}^{2}z_{1,2}}$
+\begin_inset Formula $\frac{2\left(3z_{2}z_{1,1,2}-2z_{1,2}^{2}\right)}{z_{1}^{2}\left(z_{1}z_{2}-2z_{1,2}\right)-2z_{1}\left(z_{1}z_{1,2}-3z_{1,1,2}\right)}$
 \end_inset
 
 
@@ -15163,10 +15163,543 @@ Solution 2 has the same problem with
 \end_inset
 
 .
+ 
+\end_layout
+
+\begin_layout Standard
+Figures 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:sint1l2"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ and 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:sint2l2"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ show how these triangles compare with the original curves.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename /Users/marcoscscarreira/Signatures/Pics/FitSint1l2.png
+	lyxscale 40
+	scale 30
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+2 segments fit to 
+\begin_inset Formula $\left\{ t,\sin\left(\pi\cdot t\right)\right\} $
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:sint1l2"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename /Users/marcoscscarreira/Signatures/Pics/FitSint2l2.png
+	lyxscale 40
+	scale 30
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+2 segments fit to 
+\begin_inset Formula $\left\{ t,\sin\left(\pi\cdot t^{2}\right)\right\} $
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:sint2l2"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Not bad; we're fitting the Levy Area, so we're not going to 
+\begin_inset Quotes eld
+\end_inset
+
+fill
+\begin_inset Quotes erd
+\end_inset
+
+ the area as the number of points increase; we're going to cut protruding
+ corners in one place and 
+\begin_inset Quotes eld
+\end_inset
+
+use the material
+\begin_inset Quotes erd
+\end_inset
+
+ to fill missing parts in another place (we have 
+\begin_inset Quotes eld
+\end_inset
+
+scissors congruent
+\begin_inset Quotes erd
+\end_inset
+
+ forms).
+\end_layout
+
+\begin_layout Standard
+Let's try another path with 
+\begin_inset Formula $z_{2}\neq0$
+\end_inset
+
+, like 
+\begin_inset Formula $\left\{ t,\sin\left(\pi\cdot t^{2}\right)+1-t\right\} $
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+The core signature is:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="1">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top">
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $z_{1}=1$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $z_{2}=-1$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $z_{1,2}=-\frac{FS\left(\sqrt{2}\right)}{\sqrt{2}}-\frac{1}{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $z_{1,1,2}=-\frac{6+\pi}{6\pi}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $z_{1,2,2}=-\frac{FC(2)}{8}+\frac{FS\left(\sqrt{2}\right)}{\sqrt{2}}+\frac{5}{12}-\frac{1}{\pi}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Solution 1 is:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="4" columns="1">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top">
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $T=1$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $t_{1}=\frac{3\sqrt{2}}{\pi\cdot FS\left(\sqrt{2}\right)}-1\approx0.891494$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\beta_{1}=\frac{6-\pi\cdot FS\left(\sqrt{2}\right)\left(2\cdot FS\left(\sqrt{2}\right)+\sqrt{2}\right)}{\sqrt{2}\pi\cdot FS\left(\sqrt{2}\right)-6}\approx0.132603$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\beta_{2}=\frac{3-\pi\cdot FS\left(\sqrt{2}\right)\left(FS\left(\sqrt{2}\right)+\sqrt{2}\right)}{\sqrt{2}\pi\cdot FS\left(\sqrt{2}\right)-3}\approx-10.3056$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Solution 2 is:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="4" columns="1">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top">
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $T=1$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $t_{1}=\frac{\pi\left(3\cdot FC(2)+8\cdot FS\left(\sqrt{2}\right)^{2}-4\sqrt{2}\cdot FS\left(\sqrt{2}\right)-6\right)+24}{4\sqrt{2}\pi\cdot FS\left(\sqrt{2}\right)}\approx0.778296$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\beta_{1}=\frac{8\pi\cdot FS\left(\sqrt{2}\right)^{2}}{\pi\left(3\cdot FC(2)+8\cdot FS\left(\sqrt{2}\right)^{2}-4\sqrt{2}\cdot FS\left(\sqrt{2}\right)-6\right)+24}-1\approx0.297333$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\beta_{2}=\frac{8\pi\cdot FS\left(\sqrt{2}\right)^{2}}{\pi\left(3\cdot FC(2)+8\cdot FS\left(\sqrt{2}\right)\left(FS\left(\sqrt{2}\right)-\sqrt{2}\right)-6\right)+24}-1\approx-5.55432$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+What do they look like? Let's look at Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:sint21tl2"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename /Users/marcoscscarreira/Signatures/Pics/FitSint21tl2.png
+	lyxscale 40
+	scale 30
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+The two fits of 2 segments to 
+\begin_inset Formula $\left\{ t,\sin\left(\pi\cdot t^{2}\right)+1-t\right\} $
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:sint21tl2"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The 2 values of 
+\begin_inset Formula $t_{1}$
+\end_inset
+
+ (0.89 and 0.78) bracket the value where 2nd derivative of the path is maximum
+ in absolute value (
+\begin_inset Formula $t\approx0.832$
+\end_inset
+
+), and the two approximations cross on a point very close to the path (
+\begin_inset Formula $\approx0.801$
+\end_inset
+
+).
+ If we tilt the chart such that the chord is horizontal, it is easier to
+ see the two solutions as triangles with very similar heights and the same
+ base.
+\end_layout
+
+\begin_layout Standard
+In fact, Solution 1 has the same value for 
+\begin_inset Formula $t_{1}$
+\end_inset
+
+ as the approximation for 
+\begin_inset Formula $\left\{ t,\sin\left(\pi\cdot t^{2}\right)\right\} $
+\end_inset
+
+, which implies that Solution 1 might be related purely to the 2nd derivative,
+ which is the same for 
+\begin_inset Formula $\sin\left(\pi\cdot t^{2}\right)+1-t$
+\end_inset
+
+ and 
+\begin_inset Formula $\sin\left(\pi\cdot t^{2}\right)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+We will explore more interesting curves below, when we will try to use larger
+ number of pieces.
 \end_layout
 
 \begin_layout Subsubsection
 Adversarial Cases
+\end_layout
+
+\begin_layout Standard
+We have problems when:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $z_{1}z_{2}-2z_{1,2}=0$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Because the Levy Area is equal to zero, and we don't know how far from the
+ chord to put our intermediate point.
+\end_layout
+
+\begin_layout Standard
+Also when:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $z_{2}=0$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We don't have a second solution.
+\end_layout
+
+\begin_layout Standard
+With 3 pieces we might address these problems (corresponding to the 
+\begin_inset Formula $\left\{ t,\sin\left(2\cdot\pi\cdot t\right)\right\} $
+\end_inset
+
+ path), but higher frequencies will demand more points/pieces.
 \end_layout
 
 \begin_layout Subsubsection
@@ -15175,6 +15708,14 @@ Chen's Identity for three pieces
 
 \begin_layout Subsubsection
 More than three pieces
+\end_layout
+
+\begin_layout Standard
+Break down existing pieces
+\end_layout
+
+\begin_layout Standard
+Solving larger systems
 \end_layout
 
 \begin_layout Subsection
