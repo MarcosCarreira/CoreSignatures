@@ -14817,7 +14817,15 @@ name "tab:SystemChenTS2P"
 \end_layout
 
 \begin_layout Standard
-So, 4 variables and 5 equations.
+So, 4 variables and 5 equations (we used a shortcut and substituted 
+\begin_inset Formula $\left(T-t_{1}\right)$
+\end_inset
+
+ for 
+\begin_inset Formula $t_{2}$
+\end_inset
+
+.
  Let's solve the system without equation #5 first and then solve it again
  but without equation #4 (Table 
 \begin_inset CommandInset ref
@@ -15634,7 +15642,7 @@ The 2 values of
 \end_layout
 
 \begin_layout Standard
-In fact, Solution 1 has the same value for 
+In fact, Solution 1 (the red path) has the same value for 
 \begin_inset Formula $t_{1}$
 \end_inset
 
@@ -15655,8 +15663,62 @@ In fact, Solution 1 has the same value for
 \end_layout
 
 \begin_layout Standard
-We will explore more interesting curves below, when we will try to use larger
- number of pieces.
+And at last, what happens on the obvious case of two consecutive line segments?
+ Let the path be defined by:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\left\{ t,\begin{array}{cc}
+\{ & \begin{array}{cc}
+\left[1-3t\right] & 0\leq t\leq\frac{2}{3}\\
+\left[1-3\cdot\frac{2}{3}-\left(t-\frac{2}{3}\right)\right] & \frac{2}{3}<t\leq1
+\end{array}\end{array}\right\} 
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The core signature is:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\left\{ z_{1},z_{2},z_{1,2},z_{1,1,2},z_{1,2,2}\right\} =\left\{ 1,\frac{5}{3},\frac{7}{18},\frac{5}{162},\frac{43}{162}\right\} 
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+And both solutions (1 and 2) are equal to:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\left\{ T,t_{1},\beta_{1},\beta_{2}\right\} =\left\{ 1,\frac{2}{3},3,-1\right\} 
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+So there's no ambiguity there.
+\end_layout
+
+\begin_layout Standard
+We will explore more interesting curves below, when we will try to use a
+ larger number of pieces.
 \end_layout
 
 \begin_layout Subsubsection
@@ -15706,16 +15768,647 @@ With 3 pieces we might address these problems (corresponding to the
 Chen's Identity for three pieces
 \end_layout
 
+\begin_layout Standard
+Applying Chen's Identity for the concatenation of 
+\begin_inset Formula $A$
+\end_inset
+
+, 
+\begin_inset Formula $B$
+\end_inset
+
+ and 
+\begin_inset Formula $C$
+\end_inset
+
+, we have the following equations (Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:SystemChenTS3P"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+):
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="9" columns="3">
+<features tabularvalignment="middle">
+<column alignment="right" valignment="top">
+<column alignment="right" valignment="top">
+<column alignment="right" valignment="top">
+<row>
+<cell alignment="right" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Level
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Eq #
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Equation
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="right" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $t_{1}+t_{2}+t_{3}=z_{1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="right" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\beta_{1}t_{1}+\beta_{2}t_{2}+\beta_{3}t_{3}=z_{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="right" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\begin{array}{cc}
++\frac{1}{2}\beta_{1}t_{1}^{2}+\beta_{2}t_{2}t_{1}+\beta_{3}t_{3}t_{1}\\
++\frac{1}{2}\beta_{2}t_{2}^{2}+\frac{1}{2}\beta_{3}t_{3}^{2}+\beta_{3}t_{2}t_{3} & =z_{1,2}
+\end{array}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="right" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\begin{array}{cc}
++\frac{1}{6}\beta_{1}t_{1}^{3}+\frac{1}{6}\beta_{2}t_{2}^{3}+\frac{1}{6}\beta_{3}t_{3}^{3}\\
++\frac{1}{2}\beta_{2}t_{2}t_{1}^{2}+\frac{1}{2}\beta_{3}t_{3}t_{1}^{2}+\frac{1}{2}\beta_{2}t_{2}^{2}t_{1}\\
++\frac{1}{2}\beta_{3}t_{3}^{2}t_{1}+\frac{1}{2}\beta_{3}t_{2}t_{3}^{2}+\frac{1}{2}\beta_{3}t_{2}^{2}t_{3}\\
++\beta_{3}t_{2}t_{3}t_{1} & =z_{1,1,2}
+\end{array}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="right" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\begin{array}{cc}
++\frac{1}{6}\beta_{1}^{2}t_{1}^{3}+\frac{1}{6}\beta_{2}^{2}t_{2}^{3}+\frac{1}{6}\beta_{3}^{2}t_{3}^{3}\\
++\frac{1}{2}\beta_{1}\beta_{2}t_{2}t_{1}^{2}+\frac{1}{2}\beta_{1}\beta_{3}t_{3}t_{1}^{2}+\frac{1}{2}\beta_{2}^{2}t_{2}^{2}t_{1}\\
++\frac{1}{2}\beta_{3}^{2}t_{3}^{2}t_{1}+\frac{1}{2}\beta_{3}^{2}t_{2}t_{3}^{2}+\frac{1}{2}\beta_{2}\beta_{3}t_{2}^{2}t_{3}\\
++\beta_{2}\beta_{3}t_{2}t_{3}t_{1} & =z_{1,2,2}
+\end{array}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+6
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\begin{array}{cc}
++\frac{1}{24}\beta_{1}t_{1}^{4}+\frac{1}{24}\beta_{2}t_{2}^{4}+\frac{1}{24}\beta_{3}t_{3}^{4}\\
++\frac{1}{6}\beta_{2}t_{2}t_{1}^{3}+\frac{1}{6}\beta_{3}t_{3}t_{1}^{3}+\frac{1}{6}\beta_{2}t_{2}^{3}t_{1}\\
++\frac{1}{6}\beta_{3}t_{3}^{3}t_{1}+\frac{1}{6}\beta_{3}t_{2}t_{3}^{3}+\frac{1}{6}\beta_{3}t_{2}^{3}t_{3}\\
++\frac{1}{4}\beta_{2}t_{2}^{2}t_{1}^{2}+\frac{1}{4}\beta_{3}t_{3}^{2}t_{1}^{2}+\frac{1}{4}\beta_{3}t_{2}^{2}t_{3}^{2}\\
++\frac{1}{2}\beta_{3}t_{2}t_{3}t_{1}^{2}+\frac{1}{2}\beta_{3}t_{2}t_{3}^{2}t_{1}+\frac{1}{2}\beta_{3}t_{2}^{2}t_{3}t_{1} & =z_{1,1,1,2}
+\end{array}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+7
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\begin{array}{cc}
++\frac{1}{24}\beta_{1}^{2}t_{1}^{4}+\frac{1}{24}\beta_{2}^{2}t_{2}^{4}+\frac{1}{24}\beta_{3}^{2}t_{3}^{4}\\
++\frac{1}{6}\beta_{1}\beta_{2}t_{2}t_{1}^{3}+\frac{1}{6}\beta_{1}\beta_{3}t_{3}t_{1}^{3}+\frac{1}{6}\beta_{2}^{2}t_{2}^{3}t_{1}\\
++\frac{1}{6}\beta_{3}^{2}t_{3}^{3}t_{1}+\frac{1}{6}\beta_{3}^{2}t_{2}t_{3}^{3}+\frac{1}{6}\beta_{2}\beta_{3}t_{2}^{3}t_{3}\\
++\frac{1}{4}\beta_{2}^{2}t_{2}^{2}t_{1}^{2}+\frac{1}{4}\beta_{3}^{2}t_{3}^{2}t_{1}^{2}+\frac{1}{4}\beta_{3}^{2}t_{2}^{2}t_{3}^{2}\\
++\frac{1}{2}\beta_{2}\beta_{3}t_{2}t_{3}t_{1}^{2}+\frac{1}{2}\beta_{3}^{2}t_{2}t_{3}^{2}t_{1}+\frac{1}{2}\beta_{2}\beta_{3}t_{2}^{2}t_{3}t_{1} & =z_{1,1,2,2}
+\end{array}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+8
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\begin{array}{cc}
++\frac{1}{24}\beta_{1}^{3}t_{1}^{4}+\frac{1}{24}\beta_{2}^{3}t_{2}^{4}+\frac{1}{24}\beta_{3}^{3}t_{3}^{4}\\
++\frac{1}{6}\beta_{1}^{2}\beta_{2}t_{2}t_{1}^{3}+\frac{1}{6}\beta_{1}^{2}\beta_{3}t_{3}t_{1}^{3}+\frac{1}{6}\beta_{2}^{3}t_{2}^{3}t_{1}\\
++\frac{1}{6}\beta_{3}^{3}t_{3}^{3}t_{1}+\frac{1}{6}\beta_{3}^{3}t_{2}t_{3}^{3}+\frac{1}{6}\beta_{2}^{2}\beta_{3}t_{2}^{3}t_{3}\\
++\frac{1}{4}\beta_{1}\beta_{2}^{2}t_{2}^{2}t_{1}^{2}+\frac{1}{4}\beta_{1}\beta_{3}^{2}t_{3}^{2}t_{1}^{2}+\frac{1}{4}\beta_{2}\beta_{3}^{2}t_{2}^{2}t_{3}^{2}\\
++\frac{1}{2}\beta_{1}\beta_{2}\beta_{3}t_{2}t_{3}t_{1}^{2}+\frac{1}{2}\beta_{2}\beta_{3}^{2}t_{2}t_{3}^{2}t_{1}+\frac{1}{2}\beta_{2}^{2}\beta_{3}t_{2}^{2}t_{3}t_{1} & =z_{1,2,2,2}
+\end{array}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+System of equations for three pieces of a term structure 
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:SystemChenTS3P"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This can be solved numerically, adding restrictions of positive 
+\begin_inset Formula $t_{j}$
+\end_inset
+
+s.
+\end_layout
+
+\begin_layout Standard
+Figures 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:sin1paths3pts"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ and 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:sin2paths3pts"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ show the inversions for the 
+\begin_inset Formula $\left\{ t,\sin\left(k\cdot\pi\cdot t\right)\right\} $
+\end_inset
+
+ paths.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename /Users/marcoscscarreira/Signatures/Pics/Fit3pPath1.png
+	lyxscale 30
+	scale 30
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename /Users/marcoscscarreira/Signatures/Pics/Fit3pPath2.png
+	lyxscale 30
+	scale 30
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Fits of 3 segments to 
+\begin_inset Formula $\left\{ t,\sin\left(k\cdot\pi\cdot t\right)\right\} $
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:sin1paths3pts"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename /Users/marcoscscarreira/Signatures/Pics/Fit3pPath3.png
+	lyxscale 30
+	scale 30
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename /Users/marcoscscarreira/Signatures/Pics/Fit3pPath4.png
+	lyxscale 30
+	scale 30
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Fits of 3 segments to 
+\begin_inset Formula $\left\{ t,\sin\left(k\cdot\pi\cdot t^{2}\right)\right\} $
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:sin2paths3pts"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+For only two intermediate points we're not doing so bad on signatures of
+ the continuous functions.
+\end_layout
+
 \begin_layout Subsubsection
 More than three pieces
 \end_layout
 
 \begin_layout Standard
-Break down existing pieces
+We can either generate more equations up to levels 5 and 6 and solve the
+ full system or we can go up to level 5 and add the intermediate 
+\begin_inset Formula $t_{j}$
+\end_inset
+
+s we find for2 or 3 segments as restrictions.
+ In this way we could look for 4 segments, but adding the restrictions 
+\begin_inset Formula $\left(t_{1}+t_{2}\right)_{4}=\left(t_{1}\right)_{2}$
+\end_inset
+
+ and 
+\begin_inset Formula $\left(t_{3}+t_{4}\right)_{4}=\left(t_{2}\right)_{2}$
+\end_inset
+
+; we then solve the system with these additional restrictions (we do not
+ reuse the full points, just their time coordinates).
 \end_layout
 
 \begin_layout Standard
-Solving larger systems
+On Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:sin2paths4pts"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ we see the results of the first approach (just solve the system), although
+ the solving is much slower than the 3 segments case.
+ And there are more choices of equations to ignore in order to solve consistentl
+y the system.
+ Here we ignored Equations #s 5, 8, 10, 12, 13, 14.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename /Users/marcoscscarreira/Signatures/Pics/Fit4pPath3.png
+	lyxscale 30
+	scale 30
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename /Users/marcoscscarreira/Signatures/Pics/Fit4pPath4.png
+	lyxscale 30
+	scale 30
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Fits of 4 segments to 
+\begin_inset Formula $\left\{ t,\sin\left(k\cdot\pi\cdot t^{2}\right)\right\} $
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:sin2paths4pts"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
