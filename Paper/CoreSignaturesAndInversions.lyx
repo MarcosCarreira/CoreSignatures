@@ -10670,6 +10670,13 @@ And we have 4 equations coming from the shuffle product:
 \end_layout
 
 \begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 \begin_inset Tabular
 <lyxtabular version="3" rows="4" columns="1">
 <features tabularvalignment="middle">
@@ -10738,6 +10745,13 @@ And we have 4 equations coming from the shuffle product:
 \end_layout
 
 \begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 But there's symmetry involved; the 2nd and 3rd equations are the same.
  Solving the system (more on this later) yields the solution set 
 \begin_inset Formula $P_{2}$
@@ -10760,6 +10774,13 @@ But there's symmetry involved; the 2nd and 3rd equations are the same.
 \end_inset
 
 :
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -10817,6 +10838,13 @@ But there's symmetry involved; the 2nd and 3rd equations are the same.
 \end_layout
 
 \begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 Yes, we could have expressed it in terms of 
 \begin_inset Formula $s_{2,1}$
 \end_inset
@@ -10828,6 +10856,13 @@ Yes, we could have expressed it in terms of
 , but we will discuss the structure of the solutions later.
  We can scan the right side of the substitution rules to find 
 \begin_inset Formula $C_{2}:$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace defskip
 \end_inset
 
 
@@ -10873,6 +10908,13 @@ Yes, we could have expressed it in terms of
 
 \end_layout
 
+\begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsubsection
 d=2, level 3
 \end_layout
@@ -10904,6 +10946,13 @@ Scanning
 \end_inset
 
 :
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -10960,6 +11009,13 @@ Scanning
 
 \end_layout
 
+\begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsubsection
 d=2, level 4
 \end_layout
@@ -10987,6 +11043,13 @@ Scanning
 \end_inset
 
 :
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -11057,6 +11120,13 @@ Scanning
 
 \end_layout
 
+\begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsubsection
 d=2, level 5
 \end_layout
@@ -11084,6 +11154,13 @@ Scanning
 \end_inset
 
 :
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -11168,6 +11245,13 @@ Scanning
 
 \end_layout
 
+\begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsubsection
 d=2, level 6
 \end_layout
@@ -11196,6 +11280,13 @@ Scanning
 \end_inset
 
 :
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -11295,6 +11386,13 @@ Scanning
 \end_layout
 
 \begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 So our core sets have sizes:
 \end_layout
 
@@ -11373,6 +11471,13 @@ Our 4 equations are in fact 3:
 \end_layout
 
 \begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="1">
 <features tabularvalignment="middle">
@@ -11427,6 +11532,13 @@ Our 4 equations are in fact 3:
 \end_layout
 
 \begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 We can find the Gröbner basis for this polynomial system to group the variables
  (we use Mathematica's GroebnerBasis with 
 \begin_inset Formula $Method\rightarrow"Buchberger"$
@@ -11437,6 +11549,13 @@ We can find the Gröbner basis for this polynomial system to group the variables
 \end_inset
 
 ):
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -11494,6 +11613,13 @@ We can find the Gröbner basis for this polynomial system to group the variables
 \end_layout
 
 \begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 We see that components like 
 \begin_inset Formula $s_{j,j,j,\ldots}$
 \end_inset
@@ -11518,6 +11644,13 @@ We see that components like
 \end_inset
 
  has none.
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -11725,12 +11858,26 @@ Level
 
 \end_layout
 
+\begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsubsection
 Level 3
 \end_layout
 
 \begin_layout Standard
 The Gröbner basis is:
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -11830,6 +11977,13 @@ The Gröbner basis is:
 \end_layout
 
 \begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 We see now that components where the multi-indexes are permutations of each
  other get grouped together: 
 \begin_inset Formula $s_{2,1,2}$
@@ -11854,6 +12008,13 @@ We see now that components where the multi-indexes are permutations of each
 \end_inset
 
 .
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -12168,6 +12329,13 @@ name "fig:GroebnerGraph4"
 
 \begin_layout Standard
 And updating our table:
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -12515,6 +12683,13 @@ Level
 
 \end_layout
 
+\begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsubsection
 Level 5
 \end_layout
@@ -12580,6 +12755,13 @@ name "fig:GroebnerGraph5"
 \begin_layout Standard
 .
  So the structure of the groups seems to follow quite well Pascal's Triangle:
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -13047,6 +13229,13 @@ Level
 
 \end_layout
 
+\begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsubsection
 Level 6
 \end_layout
@@ -13175,6 +13364,13 @@ Now we can look at the results and suggest a rule for the number of solutions
 \end_layout
 
 \begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 \begin_inset Tabular
 <lyxtabular version="3" rows="5" columns="1">
 <features tabularvalignment="middle">
@@ -13251,6 +13447,13 @@ Now we can look at the results and suggest a rule for the number of solutions
 </row>
 </lyxtabular>
 
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace defskip
 \end_inset
 
 
@@ -15090,6 +15293,60 @@ Because a concatenation of two line segments doesn't have a lot of freedom.
 \end_layout
 
 \begin_layout Standard
+We can also determine the two points (assuming the origin is at 
+\begin_inset Formula $\left\{ 0,0\right\} $
+\end_inset
+
+).
+ The final point is, as expected, at:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+P_{2}=\left\{ z_{1},z_{2}\right\} \label{eq:P2(Two-segments)}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We have the chord, let's use it!
+\end_layout
+
+\begin_layout Standard
+The middle point for Solution #1 (without equation #5) is:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+P_{1}=\left\{ \frac{2\left(z_{1}z_{1,2}-3z_{1,1,2}\right)}{\left(z_{1}z_{2}-2z_{1,2}\right)},\frac{-2z_{1,2}\left(z_{1}z_{2}-2z_{1,2}\right)-6z_{2}z_{1,1,2}+z_{1}^{2}z_{2}^{2}}{z_{1}\left(z_{1}z_{2}-2z_{1,2}\right)}\right\} \label{eq:P1a(Two-segments)}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The middle point for Solution #2 (without equation #4) is:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+P_{1}=\left\{ \frac{2\left(3z_{1}z_{1,2,2}-2z_{1,2}^{2}\right)}{z_{2}\left(z_{1}z_{2}-2z_{1,2}\right)},\frac{z_{2}\left(z_{1}z_{2}-2z_{1,2}\right)-2\left(z_{2}z_{1,2}-3z_{1,2,2}\right)}{\left(z_{1}z_{2}-2z_{1,2}\right)}\right\} \label{eq:P1b(Two-segments)}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 Let's try it on the core signature of 
 \begin_inset Formula $\left\{ t,\sin\left(\pi\cdot t\right)\right\} $
 \end_inset
@@ -15116,6 +15373,17 @@ Solution 1 is:
 \begin_inset Formula 
 \[
 \left\{ T,t_{1},\beta_{1},\beta_{2}\right\} =\left\{ 1,\frac{1}{2},\frac{8}{\pi},-\frac{8}{\pi}\right\} 
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\left\{ P_{1a},P_{2}\right\} =\left\{ \left\{ \frac{1}{2},\frac{4}{\pi}\right\} ,\left\{ 1,0\right\} \right\} 
 \]
 
 \end_inset
@@ -15166,6 +15434,17 @@ Solution 1 is:
 \end_layout
 
 \begin_layout Standard
+\begin_inset Formula 
+\[
+\left\{ P_{1a},P_{2}\right\} =\left\{ \left\{ \frac{\frac{6}{\pi}-\sqrt{2}\cdot FS\left(\sqrt{2}\right)}{\sqrt{2}\cdot FS\left(\sqrt{2}\right)},\sqrt{2}\cdot FS\left(\sqrt{2}\right)\right\} ,\{1,0\}\right\} 
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 Solution 2 has the same problem with 
 \begin_inset Formula $z_{2}=0$
 \end_inset
@@ -15208,8 +15487,8 @@ status open
 \align center
 \begin_inset Graphics
 	filename /Users/marcoscscarreira/Signatures/Pics/FitSint1l2.png
-	lyxscale 40
-	scale 30
+	lyxscale 50
+	scale 50
 
 \end_inset
 
@@ -15254,8 +15533,8 @@ status open
 \align center
 \begin_inset Graphics
 	filename /Users/marcoscscarreira/Signatures/Pics/FitSint2l2.png
-	lyxscale 40
-	scale 30
+	lyxscale 50
+	scale 50
 
 \end_inset
 
@@ -15333,6 +15612,13 @@ Let's try another path with
 
 \begin_layout Standard
 The core signature is:
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -15418,12 +15704,26 @@ The core signature is:
 \end_layout
 
 \begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 Solution 1 is:
 \end_layout
 
 \begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 \begin_inset Tabular
-<lyxtabular version="3" rows="4" columns="1">
+<lyxtabular version="3" rows="5" columns="1">
 <features tabularvalignment="middle">
 <column alignment="left" valignment="top">
 <row>
@@ -15469,11 +15769,25 @@ Solution 1 is:
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 \begin_inset Formula $\beta_{2}=\frac{3-\pi\cdot FS\left(\sqrt{2}\right)\left(FS\left(\sqrt{2}\right)+\sqrt{2}\right)}{\sqrt{2}\pi\cdot FS\left(\sqrt{2}\right)-3}\approx-10.3056$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $P_{1a}\approx\left\{ 0.8915,1.1182\right\} $
 \end_inset
 
 
@@ -15490,12 +15804,26 @@ Solution 1 is:
 \end_layout
 
 \begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 Solution 2 is:
 \end_layout
 
 \begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 \begin_inset Tabular
-<lyxtabular version="3" rows="4" columns="1">
+<lyxtabular version="3" rows="5" columns="1">
 <features tabularvalignment="middle">
 <column alignment="left" valignment="top">
 <row>
@@ -15541,11 +15869,25 @@ Solution 2 is:
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 \begin_inset Formula $\beta_{2}=\frac{8\pi\cdot FS\left(\sqrt{2}\right)^{2}}{\pi\left(3\cdot FC(2)+8\cdot FS\left(\sqrt{2}\right)\left(FS\left(\sqrt{2}\right)-\sqrt{2}\right)-6\right)+24}-1\approx-5.55432$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $P_{1a}\approx\left\{ 0.7783,1.2314\right\} $
 \end_inset
 
 
@@ -15562,6 +15904,13 @@ Solution 2 is:
 \end_layout
 
 \begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 What do they look like? Let's look at Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -15572,7 +15921,7 @@ noprefix "false"
 
 \end_inset
 
-:
+ :
 \end_layout
 
 \begin_layout Standard
@@ -15585,8 +15934,8 @@ status open
 \align center
 \begin_inset Graphics
 	filename /Users/marcoscscarreira/Signatures/Pics/FitSint21tl2.png
-	lyxscale 40
-	scale 30
+	lyxscale 50
+	scale 50
 
 \end_inset
 
@@ -15672,8 +16021,8 @@ And at last, what happens on the obvious case of two consecutive line segments?
 \[
 \left\{ t,\begin{array}{cc}
 \{ & \begin{array}{cc}
-\left[1-3t\right] & 0\leq t\leq\frac{2}{3}\\
-\left[1-3\cdot\frac{2}{3}-\left(t-\frac{2}{3}\right)\right] & \frac{2}{3}<t\leq1
+\left[\alpha_{1}+\beta_{1}t\right] & 0\leq t\leq t_{1}\\
+\left[\alpha_{2}+\beta_{2}t\right] & t_{1}<t\leq t_{2}
 \end{array}\end{array}\right\} 
 \]
 
@@ -15687,11 +16036,96 @@ The core signature is:
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula 
-\[
-\left\{ z_{1},z_{2},z_{1,2},z_{1,1,2},z_{1,2,2}\right\} =\left\{ 1,\frac{5}{3},\frac{7}{18},\frac{5}{162},\frac{43}{162}\right\} 
-\]
+\begin_inset VSpace defskip
+\end_inset
 
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="1">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top">
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $z_{1}=t_{1}+t_{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $z_{2}=\beta_{1}t_{1}+\beta_{2}t_{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $z_{1,2}=\frac{1}{2}\beta_{1}t_{1}^{2}+\beta_{2}t_{2}t_{1}+\frac{1}{2}\beta_{2}t_{2}^{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $z_{1,1,2}=\frac{1}{6}\beta_{1}t_{1}^{3}+\frac{1}{2}\beta_{2}t_{2}t_{1}^{2}+\frac{1}{2}\beta_{2}t_{2}^{2}t_{1}+\frac{1}{6}\beta_{2}t_{2}^{3}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $z_{1,2,2}=\frac{1}{6}\beta_{1}^{2}t_{1}^{3}+\frac{1}{2}\beta_{1}\beta_{2}t_{2}t_{1}^{2}+\frac{1}{2}\beta_{2}^{2}t_{2}^{2}t_{1}+\frac{1}{6}\beta_{2}^{2}t_{2}^{3}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace defskip
 \end_inset
 
 
@@ -15704,7 +16138,7 @@ And both solutions (1 and 2) are equal to:
 \begin_layout Standard
 \begin_inset Formula 
 \[
-\left\{ T,t_{1},\beta_{1},\beta_{2}\right\} =\left\{ 1,\frac{2}{3},3,-1\right\} 
+\left\{ T,t_{1},\beta_{1},\beta_{2}\right\} =\left\{ t_{1}+t_{2},t_{1},\beta_{1},\beta_{2}\right\} 
 \]
 
 \end_inset
@@ -15713,7 +16147,18 @@ And both solutions (1 and 2) are equal to:
 \end_layout
 
 \begin_layout Standard
-So there's no ambiguity there.
+\begin_inset Formula 
+\[
+\left\{ P_{0},P_{1},P_{2}\right\} =\left\{ \{0,0\},\left\{ t_{1},\beta_{1}t_{1}\right\} ,\left\{ t_{1}+t_{2},\beta_{1}t_{1}+\beta_{2}t_{2}\right\} \right\} 
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+So there's no ambiguity there, we recover the original parameters easily.
 \end_layout
 
 \begin_layout Standard
@@ -16160,7 +16605,10 @@ This can be solved numerically, adding restrictions of positive
 \begin_inset Formula $t_{j}$
 \end_inset
 
-s.
+s , using a low value for WorkingPrecision in NSolve, (like 5 or 6) and
+ choosing two equations to take out: one from level 3 and one from level
+ 4.
+ We have then 6 possible solutions.
 \end_layout
 
 \begin_layout Standard
@@ -16192,6 +16640,50 @@ noprefix "false"
 \end_layout
 
 \begin_layout Standard
+For the 
+\begin_inset Formula $\left\{ t,\sin\left(\pi\cdot t\right)\right\} $
+\end_inset
+
+ path, dropping equations #4 and #8 yields the lower 
+\begin_inset Formula $\beta_{2}$
+\end_inset
+
+ and therefore the most symmetrical approximation (all lengths are between
+ 2.32 and 2.42).
+\end_layout
+
+\begin_layout Standard
+For the 
+\begin_inset Formula $\left\{ t,\sin\left(2\cdot\pi\cdot t\right)\right\} $
+\end_inset
+
+ path, dropping equations #4 and #6 or equations #5 and #7 results in an
+ undetermined system.
+ All the other combinations deliver the same values.
+\end_layout
+
+\begin_layout Standard
+For the 
+\begin_inset Formula $\left\{ t,\sin\left(\pi\cdot t^{2}\right)\right\} $
+\end_inset
+
+ path, dropping equations #4 and #8, equations #5 and #6 or equations #5
+ and #7 results in no solutions.
+ Two of the other three combinations deliver very similar values.
+\end_layout
+
+\begin_layout Standard
+For the 
+\begin_inset Formula $\left\{ t,\sin\left(2\cdot\pi\cdot t^{2}\right)\right\} $
+\end_inset
+
+ path, dropping equations #4 and #6 or equations #5 and #7 results in no
+ solutions.
+ The other four combinations look similar, and probably dropping equations
+ #4 and #8 yields the best fit.
+\end_layout
+
+\begin_layout Standard
 \begin_inset Float figure
 wide false
 sideways false
@@ -16201,8 +16693,8 @@ status open
 \align center
 \begin_inset Graphics
 	filename /Users/marcoscscarreira/Signatures/Pics/Fit3pPath1.png
-	lyxscale 30
-	scale 30
+	lyxscale 50
+	scale 50
 
 \end_inset
 
@@ -16213,8 +16705,8 @@ status open
 \align center
 \begin_inset Graphics
 	filename /Users/marcoscscarreira/Signatures/Pics/Fit3pPath2.png
-	lyxscale 30
-	scale 30
+	lyxscale 50
+	scale 50
 
 \end_inset
 
@@ -16259,8 +16751,8 @@ status open
 \align center
 \begin_inset Graphics
 	filename /Users/marcoscscarreira/Signatures/Pics/Fit3pPath3.png
-	lyxscale 30
-	scale 30
+	lyxscale 50
+	scale 50
 
 \end_inset
 
@@ -16271,8 +16763,8 @@ status open
 \align center
 \begin_inset Graphics
 	filename /Users/marcoscscarreira/Signatures/Pics/Fit3pPath4.png
-	lyxscale 30
-	scale 30
+	lyxscale 50
+	scale 50
 
 \end_inset
 
@@ -16322,7 +16814,7 @@ We can either generate more equations up to levels 5 and 6 and solve the
 \begin_inset Formula $t_{j}$
 \end_inset
 
-s we find for2 or 3 segments as restrictions.
+s we find for 2 or 3 segments as restrictions.
  In this way we could look for 4 segments, but adding the restrictions 
 \begin_inset Formula $\left(t_{1}+t_{2}\right)_{4}=\left(t_{1}\right)_{2}$
 \end_inset
