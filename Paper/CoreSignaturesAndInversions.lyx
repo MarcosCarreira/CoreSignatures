@@ -407,6 +407,16 @@ Section 3 (Core Signatures) will describe how to find which terms of the
 \begin_layout Standard
 Section 4 will describe an inversion procedure where we approximate a path
  with linear segments which possess the same signature at increasing levels.
+ There are other papers on the insertion algorithm for signature inversion,
+ but 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "inversion"
+literal "false"
+
+\end_inset
+
+ is the most recent.
 \end_layout
 
 \begin_layout Standard
@@ -16778,6 +16788,78 @@ s , using a low value for WorkingPrecision in NSolve, (like 5 or 6) and
 \end_layout
 
 \begin_layout Standard
+As discussed above, it's more informative about the non-linearities to drop
+ equation #4.
+\end_layout
+
+\begin_layout Standard
+We can also attribute weights for the equations and instead of solving them
+ exactly minimize the weighted sum of squared errors.
+ In this case we would like really high weights on levels 1 and 2, high
+ weights on level 3 and so on.
+\end_layout
+
+\begin_layout Standard
+Let's try these weights (attributing more weight to equation #5 than to
+ equation #4 because of the non-linearities:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\left\{ z_{1}:50,z_{2}:50\right\} 
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\left\{ z_{1,2}:30\right\} 
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\left\{ z_{1,1,2}=5,z_{1,2,2}=10\right\} 
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\left\{ z_{1,1,1,2}=3,z_{1,1,2,2}=3,z_{1,2,2,2}=3\right\} 
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\left\{ z_{1,1,1,1,2}=2,z_{1,1,1,2,2}=2,z_{1,1,2,1,2}=2,z_{1,1,2,2,2}=2,z_{1,2,1,2,2}=2,z_{1,2,2,2,2}=2\right\} 
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 Figures 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -16814,8 +16896,8 @@ For the
 \begin_inset Formula $\beta_{2}$
 \end_inset
 
- and therefore the most symmetrical approximation (this is the solution
- plotted).
+ and therefore the most symmetrical approximation, which is the same that
+ we get from the minimization (this is the solution plotted).
 \end_layout
 
 \begin_layout Standard
@@ -16825,7 +16907,8 @@ For the
 
  path, dropping equations #4 and #6 or equations #5 and #7 results in an
  undetermined system.
- All the other combinations deliver the same values.
+ All the other combinations deliver the same values, which are equal to
+ the minimization.
 \end_layout
 
 \begin_layout Standard
@@ -16835,7 +16918,8 @@ For the
 
  path, dropping equations #4 and #8, equations #5 and #6 or equations #5
  and #7 results in no solutions.
- Two of the other three combinations deliver very similar values.
+ Two of the other three combinations deliver very similar values close to
+ the minimization result.
 \end_layout
 
 \begin_layout Standard
@@ -16845,14 +16929,8 @@ For the
 
  path, dropping equations #4 and #6 or equations #5 and #7 results in no
  solutions.
- The other four combinations look similar, and probably dropping equations
- #4 and #8 yields the best fit.
-\end_layout
-
-\begin_layout Standard
-As discussed above, it's more informative about the non-linearities to drop
- equation #4.
- If possible drop equation #8, if not drop equation #7.
+ The other four combinations look similar, spread out around the minimization
+ result.
 \end_layout
 
 \begin_layout Standard
@@ -16976,6 +17054,11 @@ For only two intermediate points we're not doing so bad on the signatures
  of continuous functions.
 \end_layout
 
+\begin_layout Standard
+And we can check that on the concatenation of 3 segments all 6 possible
+ exclusions we recover the original parameters, as expected.
+\end_layout
+
 \begin_layout Subsubsection
 More than three pieces
 \end_layout
@@ -17040,7 +17123,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Fits of 4 segments to 
+Fits of 4 and 5 segments to 
 \begin_inset Formula $\left\{ t,\sin\left(k\cdot\pi\cdot t\right)\right\} $
 \end_inset
 
@@ -17116,7 +17199,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Fits of 4 segments to 
+Fits of 4 and 5 segments to 
 \begin_inset Formula $\left\{ t,\sin\left(k\cdot\pi\cdot t^{2}\right)\right\} $
 \end_inset
 
@@ -17147,6 +17230,12 @@ While solving these non-linear systems might seem problematic, the structure
  including interpolations using DNNs.
 \end_layout
 
+\begin_layout Standard
+And we can check that on the concatenation of 4 segments we recover the
+ original parameters, as expected, with all reasonable exclusions (but some
+ exclusions take much longer to converge).
+\end_layout
+
 \begin_layout Subsection
 General 2d paths
 \end_layout
@@ -17168,6 +17257,236 @@ Now we have functions of
  That makes it harder; we can have loops and the typical ratios between
  the length of the path and the length of the chord might be much higher
  than in the previous case, so we will need comparatively more information.
+ This means that, while it is always easy to check how close the signature
+ we want to invert is to a line segment's signature, we will not focus on
+ the 2-segment case (closed loops are definitely a problem, and oscillating
+ paths also present challenges).
+\end_layout
+
+\begin_layout Standard
+Following some of the examples of 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "inversion"
+literal "false"
+
+\end_inset
+
+, we will start with the semi-circle (Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:semicircle"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+), which is closer to our 
+\begin_inset Formula $\left\{ t,\sin\left(\pi\cdot t\right)\right\} $
+\end_inset
+
+ example.
+ We will assume 
+\begin_inset Formula $t\in\left[0,1\right]$
+\end_inset
+
+ and line segments 
+\begin_inset Formula $\left\{ a_{j}\cdot t,b_{j}\cdot t\right\} $
+\end_inset
+
+.
+ We filtered out reconstructed paths where 
+\begin_inset Formula $Length\left(Path\right)\geq4$
+\end_inset
+
+, since we found paths with 
+\begin_inset Formula $Length\left(Path\right)\approx3.4$
+\end_inset
+
+ in 5 of the 6 possible exclusions for 3 segments.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename /Users/marcoscscarreira/Signatures/Pics/SemiCircle3.png
+	lyxscale 50
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename /Users/marcoscscarreira/Signatures/Pics/SemiCircle4.png
+	lyxscale 50
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+The semicircle 
+\begin_inset Formula $\left\{ \cos\left(\pi\cdot t\right),\sin\left(\pi\cdot t\right)\right\} $
+\end_inset
+
+ starting at 
+\begin_inset Formula $\left\{ 1,0\right\} $
+\end_inset
+
+ and the inversions
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:semicircle"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Next we looked at the digit 5 (Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:digit5"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+), given by the points: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\left(\begin{array}{cc}
+0 & 0\\
+20 & -3\\
+64 & 13\\
+79 & 47\\
+35 & 54\\
+37 & 77\\
+71 & 96\\
+100 & 93
+\end{array}\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This is closer to our 
+\begin_inset Formula $\left\{ t,\sin\left(2\cdot\pi\cdot t\right)\right\} $
+\end_inset
+
+ example rotated.
+ We filtered out reconstructed paths where 
+\begin_inset Formula $Length\left(Path\right)\geq300$
+\end_inset
+
+, since we found paths with 
+\begin_inset Formula $Length\left(Path\right)\approx230$
+\end_inset
+
+ in all the 6 possible exclusions for 3 segments.
+ For the 5 segments chart, we used NMinimize with RandomSearch.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename /Users/marcoscscarreira/Signatures/Pics/Digit5_3.png
+	lyxscale 50
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename /Users/marcoscscarreira/Signatures/Pics/Digit5_5.png
+	lyxscale 50
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+The inversions of the digit 5
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:digit5"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section
@@ -17545,11 +17864,1590 @@ Appendix
 
 \begin_layout Standard
 Solutions for the complete signatures as functions of the core signatures,
- up to level 6 (
+ up to level 5 (
+\begin_inset Formula $Q_{5}$
+\end_inset
+
+).
+ 
 \begin_inset Formula $Q_{6}$
 \end_inset
 
-):
+ for dimensions 2 and 3 can be found in the companion Mathematica notebook.
+\end_layout
+
+\begin_layout Standard
+Remembering that the core is:
+\begin_inset VSpace defskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="7" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="left" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Level
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Core variables
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{1},s_{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{1,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{1,1,2},s_{1,2,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{1,1,1,2},s_{1,1,2,2},s_{1,2,2,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{1,1,1,1,2},s_{1,1,1,2,2},s_{1,1,2,1,2},s_{1,1,2,2,2},s_{1,2,1,2,2},s_{1,2,2,2,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+6
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{1,1,1,1,1,2},s_{1,1,1,1,2,2},s_{1,1,1,2,1,2},s_{1,1,1,2,2,2},s_{1,1,2,1,2,2},s_{1,1,2,2,1,2},s_{1,1,2,2,2,2},s_{1,2,1,2,2,2},s_{1,2,2,2,2,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Level 2
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="3" columns="2">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top">
+<column alignment="left" valignment="top">
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{1,1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\frac{s_{1}^{2}}{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{2,1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{1}s_{2}-s_{1,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{2,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\frac{s_{2}^{2}}{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Level 3
+\end_layout
+
+\begin_layout Standard
+We can see how we could exchange 
+\begin_inset Formula $s_{1,1,2}$
+\end_inset
+
+ for either 
+\begin_inset Formula $s_{1,2,1}$
+\end_inset
+
+ or 
+\begin_inset Formula $s_{2,1,1}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="6" columns="2">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top">
+<column alignment="left" valignment="top">
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{1,1,1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\frac{s_{1}^{3}}{6}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{1,2,1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{1}s_{1,2}-2s_{1,1,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{2,1,1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $-s_{1}s_{1,2}+s_{1,1,2}+\frac{1}{2}s_{2}s_{1}^{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{2,1,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{2}s_{1,2}-2s_{1,2,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{2,2,1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $-s_{2}s_{1,2}+s_{1,2,2}+\frac{1}{2}s_{1}s_{2}^{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{2,2,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\frac{s_{2}^{3}}{6}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Level 4
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="13" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{1,1,1,1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\frac{s_{1}^{4}}{24}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{1,1,2,1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{1}s_{1,1,2}-3s_{1,1,1,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{1,2,1,1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\frac{1}{2}s_{1}^{2}s_{1,2}-2s_{1}s_{1,1,2}+3s_{1,1,1,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{2,1,1,1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $-\frac{1}{2}s_{1}^{2}s_{1,2}+s_{1}s_{1,1,2}-s_{1,1,1,2}+\frac{1}{6}s_{2}s_{1}^{3}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{1,2,2,1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{1}s_{1,2,2}-\frac{s_{1,2}^{2}}{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{2,1,1,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{2}s_{1,1,2}-\frac{s_{1,2}^{2}}{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{1,2,1,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\frac{s_{1,2}^{2}}{2}-2s_{1,1,2,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{2,1,2,1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\frac{s_{1,2}^{2}}{2}+s_{1}s_{2}s_{1,2}-2s_{2}s_{1,1,2}-2s_{1}s_{1,2,2}+2s_{1,1,2,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{2,2,1,1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $-s_{1}s_{2}s_{1,2}+s_{2}s_{1,1,2}+s_{1}s_{1,2,2}-s_{1,1,2,2}+\frac{1}{4}s_{1}^{2}s_{2}^{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{2,1,2,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{2}s_{1,2,2}-3s_{1,2,2,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{2,2,1,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\frac{1}{2}s_{2}^{2}s_{1,2}-2s_{2}s_{1,2,2}+3s_{1,2,2,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{2,2,2,1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $-\frac{1}{2}s_{2}^{2}s_{1,2}+s_{2}s_{1,2,2}-s_{1,2,2,2}+\frac{1}{6}s_{1}s_{2}^{3}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{2,2,2,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\frac{s_{2}^{4}}{24}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Level 5
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="26" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{1,1,1,1,1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\frac{s_{1}^{5}}{120}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{1,1,1,2,1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{1}s_{1,1,1,2}-4s_{1,1,1,1,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{1,1,2,1,1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\frac{1}{2}s_{1}^{2}s_{1,1,2}-3s_{1}s_{1,1,1,2}+6s_{1,1,1,1,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{1,2,1,1,1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\frac{1}{6}s_{1}^{3}s_{1,2}-s_{1}^{2}s_{1,1,2}+3s_{1}s_{1,1,1,2}-4s_{1,1,1,1,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{2,1,1,1,1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $-\frac{1}{6}s_{1}^{3}s_{1,2}+\frac{1}{2}s_{1}^{2}s_{1,1,2}-s_{1}s_{1,1,1,2}+s_{1,1,1,1,2}+\frac{1}{24}s_{2}s_{1}^{4}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{1,1,2,2,1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{1}s_{1,1,2,2}-3s_{1,1,1,2,2}-s_{1,1,2,1,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{1,2,1,1,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{1,2}s_{1,1,2}-6s_{1,1,1,2,2}-3s_{1,1,2,1,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{1,2,1,2,1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\frac{1}{2}s_{1}s_{1,2}^{2}-2s_{1,1,2}s_{1,2}-2s_{1}s_{1,1,2,2}+12s_{1,1,1,2,2}+4s_{1,1,2,1,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{1,2,2,1,1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\frac{1}{2}s_{1}^{2}s_{1,2,2}-\frac{1}{2}s_{1}s_{1,2}^{2}+s_{1,2}s_{1,1,2}-3s_{1,1,1,2,2}-s_{1,1,2,1,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{2,1,1,1,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $-s_{1,2}s_{1,1,2}+s_{2}s_{1,1,1,2}+4s_{1,1,1,2,2}+2s_{1,1,2,1,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{2,1,1,2,1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $-\frac{1}{2}s_{1}s_{1,2}^{2}+2s_{1,1,2}s_{1,2}+s_{1}s_{2}s_{1,1,2}-3s_{2}s_{1,1,1,2}-6s_{1,1,1,2,2}-3s_{1,1,2,1,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{2,1,2,1,1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\frac{1}{2}s_{2}s_{1}^{2}s_{1,2}-s_{1}^{2}s_{1,2,2}+\frac{1}{2}s_{1}s_{1,2}^{2}-2s_{2}s_{1}s_{1,1,2}+2s_{1}s_{1,1,2,2}-s_{1,2}s_{1,1,2}+3s_{2}s_{1,1,1,2}+s_{1,1,2,1,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{2,2,1,1,1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $-\frac{1}{2}s_{2}s_{1}^{2}s_{1,2}+\frac{1}{2}s_{1}^{2}s_{1,2,2}+s_{2}s_{1}s_{1,1,2}-s_{1}s_{1,1,2,2}-s_{2}s_{1,1,1,2}+s_{1,1,1,2,2}+\frac{1}{12}s_{2}^{2}s_{1}^{3}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{1,2,2,1,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{1,2}s_{1,2,2}-6s_{1,1,2,2,2}-3s_{1,2,1,2,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{1,2,2,2,1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $-s_{1,2}s_{1,2,2}+s_{1}s_{1,2,2,2}+4s_{1,1,2,2,2}+2s_{1,2,1,2,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{2,1,1,2,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{2}s_{1,1,2,2}-3s_{1,1,2,2,2}-s_{1,2,1,2,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{2,1,2,1,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\frac{1}{2}s_{2}s_{1,2}^{2}-2s_{1,2,2}s_{1,2}-2s_{2}s_{1,1,2,2}+12s_{1,1,2,2,2}+4s_{1,2,1,2,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{2,1,2,2,1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $-\frac{1}{2}s_{2}s_{1,2}^{2}+2s_{1,2,2}s_{1,2}+s_{1}s_{2}s_{1,2,2}-3s_{1}s_{1,2,2,2}-6s_{1,1,2,2,2}-3s_{1,2,1,2,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{2,2,1,1,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\frac{1}{2}s_{2}^{2}s_{1,1,2}-\frac{1}{2}s_{2}s_{1,2}^{2}+s_{1,2}s_{1,2,2}-3s_{1,1,2,2,2}-s_{1,2,1,2,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{2,2,1,2,1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\frac{1}{2}s_{1}s_{2}^{2}s_{1,2}-s_{2}^{2}s_{1,1,2}+\frac{1}{2}s_{2}s_{1,2}^{2}-2s_{1}s_{2}s_{1,2,2}+2s_{2}s_{1,1,2,2}-s_{1,2}s_{1,2,2}+3s_{1}s_{1,2,2,2}+s_{1,2,1,2,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{2,2,2,1,1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $-\frac{1}{2}s_{1}s_{2}^{2}s_{1,2}+\frac{1}{2}s_{2}^{2}s_{1,1,2}+s_{1}s_{2}s_{1,2,2}-s_{2}s_{1,1,2,2}-s_{1}s_{1,2,2,2}+s_{1,1,2,2,2}+\frac{1}{12}s_{1}^{2}s_{2}^{3}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{2,1,2,2,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{2}s_{1,2,2,2}-4s_{1,2,2,2,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{2,2,1,2,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\frac{1}{2}s_{2}^{2}s_{1,2,2}-3s_{2}s_{1,2,2,2}+6s_{1,2,2,2,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{2,2,2,1,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\frac{1}{6}s_{2}^{3}s_{1,2}-s_{2}^{2}s_{1,2,2}+3s_{2}s_{1,2,2,2}-4s_{1,2,2,2,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{2,2,2,2,1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $-\frac{1}{6}s_{2}^{3}s_{1,2}+\frac{1}{2}s_{2}^{2}s_{1,2,2}-s_{2}s_{1,2,2,2}+s_{1,2,2,2,2}+\frac{1}{24}s_{1}s_{2}^{4}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{2,2,2,2,2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\frac{s_{2}^{5}}{120}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
 \end_layout
 
 \end_body
