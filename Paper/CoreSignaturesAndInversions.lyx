@@ -14640,6 +14640,20 @@ This approximation starts to overestimate the number of core variables for
 , but it is very helpful to understand the structure of the solutions.
 \end_layout
 
+\begin_layout Standard
+And we have a choice (or some choices) within each permutation group for
+ the multi-index of the core signatures.
+ We chose the lowest numbers (
+\begin_inset Formula $1,2$
+\end_inset
+
+ instead of 
+\begin_inset Formula $2,1$
+\end_inset
+
+) as per Mathematica's solutions.
+\end_layout
+
 \begin_layout Section
 Inversion of Core Signatures
 \end_layout
@@ -15999,16 +16013,168 @@ In fact, Solution 1 (the red path) has the same value for
 \begin_inset Formula $\left\{ t,\sin\left(\pi\cdot t^{2}\right)\right\} $
 \end_inset
 
-, which implies that Solution 1 might be related purely to the 2nd derivative,
- which is the same for 
-\begin_inset Formula $\sin\left(\pi\cdot t^{2}\right)+1-t$
+, because the core terms 
+\begin_inset Formula $z_{2}$
+\end_inset
+
+, 
+\begin_inset Formula $z_{1,2}$
 \end_inset
 
  and 
-\begin_inset Formula $\sin\left(\pi\cdot t^{2}\right)$
+\begin_inset Formula $z_{1,1,2}$
+\end_inset
+
+ of the 
+\begin_inset Formula $\left\{ t,\sin\left(\pi\cdot t^{2}\right)+1-t\right\} $
+\end_inset
+
+ path are equivalent to the sum of their respective terms on the 
+\begin_inset Formula $\left\{ t,\sin\left(\pi\cdot t^{2}\right)\right\} $
+\end_inset
+
+ and 
+\begin_inset Formula $\left\{ t,+1-t\right\} $
+\end_inset
+
+ paths.
+ This is true for any addition of paths 
+\begin_inset Formula $\left\{ t,\alpha\cdot t^{a}\right\} $
+\end_inset
+
+ and 
+\begin_inset Formula $\left\{ t,\beta\cdot t^{b}\right\} $
+\end_inset
+
+ where 
+\begin_inset Formula $a,b>0$
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="1">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top">
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $z_{1}=1$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $z_{2}=\left[\alpha\right]+\left[\beta\right]$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $z_{1,2}=\left[\frac{\alpha\cdot a}{1+a}\right]+\left[\frac{\beta\cdot b}{1+b}\right]$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $z_{1,1,2}=\left[\frac{\alpha\cdot a}{2\left(2+a\right)}\right]+\left[\frac{\beta\cdot b}{2\left(2+b\right)}\right]$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $z_{1,2,2}=\left[\frac{\alpha^{2}\cdot a^{2}}{\left(1+a\right)\left(1+2a\right)}\right]+\left[\frac{\beta^{2}\cdot b^{2}}{\left(1+b\right)\left(1+2b\right)}\right]+\frac{\alpha\cdot a\cdot\beta\cdot b\cdot\left(2+a+b\right)}{\left(1+a\right)\left(1+b\right)\left(1+a+b\right)}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Where the terms inside the brackets correspond to the core signatures of
+ each isolated path.
+ Only 
+\begin_inset Formula $z_{1,2,2}$
+\end_inset
+
+ presents other cross terms in the core of 
+\begin_inset Formula $\left\{ t,\alpha\cdot t^{a}+\beta\cdot t^{b}\right\} $
 \end_inset
 
 .
+ This is why the fit of Solution 2 (without equation #4) is better.
+\end_layout
+
+\begin_layout Standard
+It would be interesting to know more about the other levels of the core
+ signatures of the sum of paths 
+\begin_inset Formula $\left\{ t,f\left(t\right)\right\} $
+\end_inset
+
+ and 
+\begin_inset Formula $\left\{ t,\beta\cdot t\right\} $
+\end_inset
+
+ on the same interval as a function of each core signature.
 \end_layout
 
 \begin_layout Standard
@@ -16648,8 +16814,8 @@ For the
 \begin_inset Formula $\beta_{2}$
 \end_inset
 
- and therefore the most symmetrical approximation (all lengths are between
- 2.32 and 2.42).
+ and therefore the most symmetrical approximation (this is the solution
+ plotted).
 \end_layout
 
 \begin_layout Standard
@@ -16681,6 +16847,12 @@ For the
  solutions.
  The other four combinations look similar, and probably dropping equations
  #4 and #8 yields the best fit.
+\end_layout
+
+\begin_layout Standard
+As discussed above, it's more informative about the non-linearities to drop
+ equation #4.
+ If possible drop equation #8, if not drop equation #7.
 \end_layout
 
 \begin_layout Standard
@@ -16717,7 +16889,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Fits of 3 segments to 
+Selected fits of 3 segments to 
 \begin_inset Formula $\left\{ t,\sin\left(k\cdot\pi\cdot t\right)\right\} $
 \end_inset
 
@@ -16800,8 +16972,8 @@ name "fig:sin2paths3pts"
 \end_layout
 
 \begin_layout Standard
-For only two intermediate points we're not doing so bad on signatures of
- the continuous functions.
+For only two intermediate points we're not doing so bad on the signatures
+ of continuous functions.
 \end_layout
 
 \begin_layout Subsubsection
@@ -16809,26 +16981,91 @@ More than three pieces
 \end_layout
 
 \begin_layout Standard
-We can either generate more equations up to levels 5 and 6 and solve the
- full system or we can go up to level 5 and add the intermediate 
-\begin_inset Formula $t_{j}$
-\end_inset
-
-s we find for 2 or 3 segments as restrictions.
- In this way we could look for 4 segments, but adding the restrictions 
-\begin_inset Formula $\left(t_{1}+t_{2}\right)_{4}=\left(t_{1}\right)_{2}$
-\end_inset
-
- and 
-\begin_inset Formula $\left(t_{3}+t_{4}\right)_{4}=\left(t_{2}\right)_{2}$
-\end_inset
-
-; we then solve the system with these additional restrictions (we do not
- reuse the full points, just their time coordinates).
+We now need to go to to level 5 of the signature (again, we are assuming
+ that the signature comes from a smooth function).
+ But there are more choices of equations to ignore in order to solve consistentl
+y the system and even with a lower precision the non-linearity of the equations
+ results in much larger solving times.
 \end_layout
 
 \begin_layout Standard
-On Figure 
+Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:sinpaths4pts"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ shows some results for 
+\begin_inset Formula $\left\{ t,\sin\left(k\cdot\pi\cdot t\right)\right\} $
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename /Users/marcoscscarreira/Signatures/Pics/Fit4pPath1.png
+	lyxscale 50
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename /Users/marcoscscarreira/Signatures/Pics/Fit4pPath2.png
+	lyxscale 50
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Fits of 4 segments to 
+\begin_inset Formula $\left\{ t,\sin\left(k\cdot\pi\cdot t\right)\right\} $
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:sinpaths4pts"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:sin2paths4pts"
@@ -16838,11 +17075,11 @@ noprefix "false"
 
 \end_inset
 
- we see the results of the first approach (just solve the system), although
- the solving is much slower than the 3 segments case.
- And there are more choices of equations to ignore in order to solve consistentl
-y the system.
- Here we ignored Equations #s 5, 8, 10, 12, 13, 14.
+ shows some results for 
+\begin_inset Formula $\left\{ t,\sin\left(k\cdot\pi\cdot t^{2}\right)\right\} $
+\end_inset
+
+:
 \end_layout
 
 \begin_layout Standard
@@ -16855,8 +17092,8 @@ status open
 \align center
 \begin_inset Graphics
 	filename /Users/marcoscscarreira/Signatures/Pics/Fit4pPath3.png
-	lyxscale 30
-	scale 30
+	lyxscale 50
+	scale 50
 
 \end_inset
 
@@ -16867,8 +17104,8 @@ status open
 \align center
 \begin_inset Graphics
 	filename /Users/marcoscscarreira/Signatures/Pics/Fit4pPath4.png
-	lyxscale 30
-	scale 30
+	lyxscale 50
+	scale 50
 
 \end_inset
 
@@ -16903,8 +17140,34 @@ name "fig:sin2paths4pts"
 
 \end_layout
 
+\begin_layout Standard
+While solving these non-linear systems might seem problematic, the structure
+ of the equations is always the same; so there's no reason why strategies
+ to solve these systems up the level 6 of the signatures cannot be developed,
+ including interpolations using DNNs.
+\end_layout
+
 \begin_layout Subsection
 General 2d paths
+\end_layout
+
+\begin_layout Standard
+Now we have functions of 
+\begin_inset Formula $t$
+\end_inset
+
+ in both coordinates (
+\begin_inset Formula $\left\{ f\left(t\right),g\left(t\right)\right\} $
+\end_inset
+
+ instead of 
+\begin_inset Formula $\left\{ t,f\left(t\right)\right\} $
+\end_inset
+
+).
+ That makes it harder; we can have loops and the typical ratios between
+ the length of the path and the length of the chord might be much higher
+ than in the previous case, so we will need comparatively more information.
 \end_layout
 
 \begin_layout Section
@@ -17281,21 +17544,12 @@ Appendix
 \end_layout
 
 \begin_layout Standard
-The charts and tables for the daily estimates are below.
- The only real worry is the instability of the parameters of the 
-\begin_inset Formula $T\rightarrow T$
+Solutions for the complete signatures as functions of the core signatures,
+ up to level 6 (
+\begin_inset Formula $Q_{6}$
 \end_inset
 
- kernels, although the intensities 
-\begin_inset Formula $\frac{\alpha}{\beta}$
-\end_inset
-
- are stable.
- The upper bound for 
-\begin_inset Formula $\beta\left(T\rightarrow T\right)$
-\end_inset
-
- was hit on day 16.
+):
 \end_layout
 
 \end_body
