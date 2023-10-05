@@ -130,7 +130,7 @@ Core Signatures and Inversions
 \end_layout
 
 \begin_layout Date
-Sep-2023
+05-Oct-2023
 \end_layout
 
 \begin_layout Author
@@ -160,8 +160,8 @@ The signature method allows transformations of the original data (either
  system).
  Because the core signatures are subsets of the original signatures, we
  can use Chen's Identity to invert a given core signature in order to easily
- find two (or three, where appropriate) line segments that, when concatenated,
- produce the original core signature, improving interpretability.
+ find 4 or 5 line segments that, when concatenated, reproduce enough of
+ the original core signature, improving interpretability.
  We discuss briefly the use of time-ordered paths for term structure modeling
  in finance (to be discussed in depth in a subsequent paper).
  Mathematica code is available on GitHub at 
@@ -420,7 +420,7 @@ literal "false"
 \end_layout
 
 \begin_layout Standard
-Section 5 will discuss an application of signatures - term structure modeling
+Section 5 will preview an application of signatures - term structure modeling
  in finance.
 \end_layout
 
@@ -17226,8 +17226,9 @@ name "fig:sin2paths4pts"
 \begin_layout Standard
 While solving these non-linear systems might seem problematic, the structure
  of the equations is always the same; so there's no reason why strategies
- to solve these systems up the level 6 of the signatures cannot be developed,
- including interpolations using DNNs.
+ to solve these systems (where solving could be also seen as minimizing
+ the weighted sum of the squared errors) up the level 6 of the signatures
+ cannot be developed, including interpolations using DNNs.
 \end_layout
 
 \begin_layout Standard
@@ -17318,7 +17319,7 @@ status open
 \begin_inset Graphics
 	filename /Users/marcoscscarreira/Signatures/Pics/SemiCircle3.png
 	lyxscale 50
-	scale 50
+	scale 45
 
 \end_inset
 
@@ -17330,7 +17331,7 @@ status open
 \begin_inset Graphics
 	filename /Users/marcoscscarreira/Signatures/Pics/SemiCircle4.png
 	lyxscale 50
-	scale 50
+	scale 45
 
 \end_inset
 
@@ -17370,10 +17371,10 @@ name "fig:semicircle"
 \end_layout
 
 \begin_layout Standard
-Next we looked at the digit 5 (Figure 
+Next we looked at the digit 5 (Figures 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:digit5"
+reference "fig:digit5_3"
 plural "false"
 caps "false"
 noprefix "false"
@@ -17454,6 +17455,36 @@ status open
 \end_layout
 
 \begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+The 3-segment inversions of the digit 5
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:digit5_3"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
 \align center
 \begin_inset Graphics
 	filename /Users/marcoscscarreira/Signatures/Pics/Digit5_5.png
@@ -17469,10 +17500,10 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-The inversions of the digit 5
+The 5-segment inversion of the digit 5
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:digit5"
+name "fig:digit5_5"
 
 \end_inset
 
@@ -17487,6 +17518,18 @@ name "fig:digit5"
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+Which is satisfying - given a signature from a concatenation of 7 line segments,
+ we should be able to get most of it with 5 segments.
+\end_layout
+
+\begin_layout Standard
+The choice of the error function and weights can definitely be improved,
+ but overall we should be able to get good results by inverting truncated
+ (at level 6) signatures from 2d paths and getting something like 8 points
+ with good confidence.
 \end_layout
 
 \begin_layout Section
@@ -17497,12 +17540,118 @@ Term structures in finance
 Interest rates
 \end_layout
 
+\begin_layout Standard
+Signatures seem to be designed to model interest rate curves:
+\end_layout
+
+\begin_layout Enumerate
+IR curves have shapes that change while the initial value (the overnight
+ rate) stays constant for a period
+\end_layout
+
+\begin_layout Enumerate
+Unexpected changes in this initial value change the shape of the curve
+\end_layout
+
+\begin_layout Enumerate
+We can build the signatures of both spot and forward rates from traded contracts
+ or bonds and we don't need an interpolating function for daily rates beyond
+ 3 or 6 months
+\end_layout
+
+\begin_layout Enumerate
+We can correlate changes in the short slope with past moves by the central
+ bank (upward sloping short rates are more likely to happen in the middle
+ of a tightening circle)
+\end_layout
+
+\begin_layout Enumerate
+The difference between the short rate and the implied long term rate is
+ on level 1
+\end_layout
+
+\begin_layout Enumerate
+We can also plot rates vs 
+\begin_inset Formula $\sqrt{t}$
+\end_inset
+
+ , so the parts where the curve bends more are more spread out (so the 30y
+ will get closer to the 10y, but the 3m and 6m will get comparatively further
+ apart)
+\end_layout
+
+\begin_layout Enumerate
+When a 
+\begin_inset Quotes eld
+\end_inset
+
+hump
+\begin_inset Quotes erd
+\end_inset
+
+ appears, it changes drastically the hedging portfolio, so knowing which
+ maturity is driving the hump and how the curve adjusted afterwards is easier
+ with signatures
+\end_layout
+
+\begin_layout Enumerate
+It becomes easier to compare different countries, as the time scales become
+ relative
+\end_layout
+
+\begin_layout Subsection
+Commodities
+\end_layout
+
+\begin_layout Standard
+Although there is not the logic of the short rate and Central Banks, it
+ becomes easy to identify seasonality patterns and apply them to stress
+ scenarios.
+ We can stress one particular point in time and use different response functions
+ for the rest of the curve.
+ We might keep the original timescale here.
+\end_layout
+
 \begin_layout Subsection
 Volatility
 \end_layout
 
+\begin_layout Standard
+Again we have the short term slope influenced by the recent past; we can
+ also have humps (e.g.
+ earnings calendars) and the difference between current volatility and long-term
+ volatility, which is a feature in some models, is one of the first points
+ (
+\begin_inset Formula $z_{2})$
+\end_inset
+
+ of the signature.
+ Here we might again switch to a square root timescale, ie, plot implied
+ and realized volatilities vs 
+\begin_inset Formula $\sqrt{t}$
+\end_inset
+
+ .
+\end_layout
+
+\begin_layout Standard
+We expect to apply the results of this paper to term structures in a subsequent
+ paper.
+\end_layout
+
 \begin_layout Section
 Conclusions
+\end_layout
+
+\begin_layout Standard
+In this paper we introduced core signatures, which are subsets of the original
+ signatures with the same size as log signatures and a faster and easier
+ calculation algorithm (systematic shuffle product leading to a sparse linear
+ system).
+ Because the core signatures are subsets of the original signatures, we
+ can use Chen's Identity to invert a given core signature in order to easily
+ find 4 or 5 line segments that, when concatenated, reproduce enough of
+ the original core signature, improving interpretability.
 \end_layout
 
 \begin_layout Standard
