@@ -1,0 +1,621 @@
+#LyX 2.4 created this file. For more info see https://www.lyx.org/
+\lyxformat 620
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\begin_preamble
+\usepackage{lastpage}
+\usepackage{breakcites}
+\lhead{}
+\chead{}
+\rhead{}
+\lfoot{}
+\cfoot{{Page} \thepage { of} \pageref{LastPage}}
+\rfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\usepackage{indentfirst}
+\makeatletter
+\providecommand*{\shuffle}{%
+  \mathbin{\mathpalette\shuffle@{}}%
+}
+\newcommand*{\shuffle@}[2]{%
+  % #1: math style
+  % #2: unused
+  \sbox0{$#1\vcenter{}$}%
+  \kern .15\ht0 % side bearing
+  \rlap{\vrule height .25\ht0 depth 0pt width 2.5\ht0}%
+  \raise.1\ht0\hbox to 2.5\ht0{%
+    \vrule height 1.75\ht0 depth -.1\ht0 width .17\ht0 %
+    \hfill
+    \vrule height 1.75\ht0 depth -.1\ht0 width .17\ht0 %
+    \hfill
+    \vrule height 1.75\ht0 depth -.1\ht0 width .17\ht0 %
+  }%
+  \kern .15\ht0 % side bearing
+}
+\makeatother
+\end_preamble
+\use_default_options true
+\maintain_unincluded_children no
+\language english
+\language_package default
+\inputencoding auto-legacy
+\fontencoding auto
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_roman_osf false
+\font_sans_osf false
+\font_typewriter_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\float_placement H
+\paperfontsize 12
+\spacing single
+\use_hyperref true
+\pdf_bookmarks true
+\pdf_bookmarksnumbered false
+\pdf_bookmarksopen false
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks false
+\pdf_pdfborder false
+\pdf_colorlinks false
+\pdf_backref false
+\pdf_pdfusetitle true
+\pdf_quoted_options "colorlinks=true,citecolor=blue"
+\papersize a4
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_formatted_ref 0
+\use_minted 0
+\use_lineno 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 2.5cm
+\topmargin 3cm
+\rightmargin 2.5cm
+\bottommargin 3cm
+\footskip 1cm
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle fancy
+\tablestyle default
+\tracking_changes false
+\output_changes false
+\change_bars false
+\postpone_fragile_content false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\docbook_table_output 0
+\docbook_mathml_prefix 1
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Core Signatures and Tensor Ranks
+\end_layout
+
+\begin_layout Date
+Jan-2025
+\end_layout
+
+\begin_layout Author
+Marcos Costa Santos Carreira
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+marcoscscarreira@gmail.com
+\end_layout
+
+\end_inset
+
+,
+ 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+and
+\end_layout
+
+\end_inset
+
+ _
+\end_layout
+
+\begin_layout Abstract
+We examine the conditions in which the Tensor Rank of the third level of a Signature Tensor might be less than 3,
+ using Core Signatures.
+ Mathematica code is available on GitHub at 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://github.com/MarcosCarreira/Lucretius
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Abstract
+
+\shape italic
+Keywords
+\shape default
+:
+ Signatures,
+ Tensor Rank,
+ Core Signatures
+\end_layout
+
+\begin_layout Abstract
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Introduction
+\end_layout
+
+\begin_layout Standard
+Section 2 (Definitions)
+\end_layout
+
+\begin_layout Standard
+Section 3 ()
+\end_layout
+
+\begin_layout Standard
+Section 4 ()
+\end_layout
+
+\begin_layout Standard
+Section 5 ()
+\end_layout
+
+\begin_layout Section
+Definitions
+\end_layout
+
+\begin_layout Subsection
+Signatures
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+S_{3}=\left[\begin{array}{c}
+\left[\begin{array}{cc}
+\sigma_{1,1,1} & \sigma_{1,1,2}\\
+\sigma_{1,2,1} & \sigma_{1,2,2}
+\end{array}\right]\\
+\\\left[\begin{array}{cc}
+\sigma_{2,1,1} & \sigma_{2,1,2}\\
+\sigma_{2,2,1} & \sigma_{2,2,2}
+\end{array}\right]
+\end{array}\right]
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Core Signatures
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+C_{3}=\left\{ s_{1},s_{2},s_{1,2},s_{1,1,2},s_{1,2,2}\right\} 
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+S_{3}=\left[\begin{array}{c}
+\left[\begin{array}{cc}
+\frac{1}{6}\left(s_{1}\right)^{3} & s_{1,1,2}\\
+s_{1}s_{1,2}-2s_{1,1,2} & s_{1,2,2}
+\end{array}\right]\\
+\\\left[\begin{array}{cc}
+\frac{1}{2}\left(s_{1}\right)^{2}s_{2}-s_{1}s_{1,2}+s_{1,1,2} & s_{2}s_{1,2}-2s_{1,2,2}\\
+\frac{1}{2}s_{1}\left(s_{2}\right)^{2}-s_{2}s_{1,2}+s_{1,2,2} & \frac{1}{6}\left(s_{2}\right)^{3}
+\end{array}\right]
+\end{array}\right]
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray}
+s_{1} & = & \sqrt[3]{6\sigma_{1,1,1}}\\
+s_{2} & = & \sqrt[3]{6\sigma_{2,2,2}}\\
+s_{1,2} & = & \frac{\sigma_{1,2,1}+2\sigma_{1,1,2}}{\sqrt[3]{6\sigma_{1,1,1}}}=\frac{\sigma_{2,1,2}+2\sigma_{1,2,2}}{\sqrt[3]{6\sigma_{2,2,2}}}\\
+s_{1,1,2} & = & \sigma_{1,1,2}\\
+s_{1,2,2} & = & \sigma_{1,2,2}
+\end{eqnarray}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Tensor Rank
+\end_layout
+
+\begin_layout Subsubsection
+Definitions
+\end_layout
+
+\begin_layout Subsubsection
+Conditions
+\end_layout
+
+\begin_layout Standard
+Cayley's hyperdeterminant:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray}
+\Delta_{222} & = & \left(\sigma_{1,1,1}\right)^{2}\left(\sigma_{2,2,2}\right)^{2}+\left(\sigma_{1,2,1}\right)^{2}\left(\sigma_{2,1,2}\right)^{2}+\left(\sigma_{1,1,2}\right)^{2}\left(\sigma_{2,2,1}\right)^{2}+\left(\sigma_{1,2,2}\right)^{2}\left(\sigma_{2,1,1}\right)^{2}\\
+ &  & +4\left(\sigma_{1,1,1}\sigma_{1,2,2}\sigma_{2,1,2}\sigma_{2,2,1}+\sigma_{1,1,2}\sigma_{1,2,1}\sigma_{2,1,1}\sigma_{2,2,2}\right)\nonumber \\
+ &  & -2\left(\begin{array}{c}
++\sigma_{1,1,1}\sigma_{1,1,2}\sigma_{2,2,1}\sigma_{2,2,2}+\sigma_{1,1,1}\sigma_{1,2,1}\sigma_{2,1,2}\sigma_{2,2,2}\\
++\sigma_{1,1,1}\sigma_{1,2,2}\sigma_{2,1,1}\sigma_{2,2,2}+\sigma_{1,1,2}\sigma_{1,2,1}\sigma_{2,1,2}\sigma_{2,2,1}\\
++\sigma_{1,1,2}\sigma_{1,2,2}\sigma_{2,1,1}\sigma_{2,2,1}+\sigma_{1,2,1}\sigma_{1,2,2}\sigma_{2,1,1}\sigma_{2,1,2}
+\end{array}\right)\nonumber 
+\end{eqnarray}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Substituting the Core Signatures:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray}
+\Delta_{222} & = & \frac{1}{1296}\left(\left(s_{1}\right)^{2}\left(s_{2}\right)^{2}+6s_{1}s_{1,2,2}+6s_{2}s_{1,1,2}-6s_{1}s_{2}s_{1,2}\right)^{2}\cdot\\
+ &  & \cdot\left(\left(6s_{1,2}+s_{1}s_{2}\right)^{2}-48\left(s_{1}s_{1,2,2}+s_{2}s_{1,1,2}\right)\right)\nonumber 
+\end{eqnarray}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+With a much simpler positivity condition:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\left(6s_{1,2}+s_{1}s_{2}\right)^{2}>48\left(s_{1}s_{1,2,2}+s_{2}s_{1,1,2}\right)
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+CP Decomposition
+\end_layout
+
+\begin_layout Subsubsection
+Tucker Decomposition
+\end_layout
+
+\begin_layout Section
+Records
+\end_layout
+
+\begin_layout Section
+Simulations
+\end_layout
+
+\begin_layout Section
+Conclusions
+\end_layout
+
+\begin_layout Standard
+aaa.
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+label "Pérez Vomlel (2022)"
+key "Rank 2x2x2"
+literal "false"
+
+\end_inset
+
+Iván Pérez,
+ Jiřı́ Vomlel.
+ (2022) 
+\begin_inset Quotes eld
+\end_inset
+
+On the rank of 2×2×2 probability tables
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Proceedings of The 11th International Conference on Probabilistic Graphical Models,
+ PMLR 186:361-372,
+ 2022.
+ 
+\begin_inset CommandInset href
+LatexCommand href
+name "https://proceedings.mlr.press/v186/perez22a.html"
+target "https://proceedings.mlr.press/v186/perez22a.html"
+literal "false"
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+label "Cirillo Taleb 2016"
+key "ES Op Risk"
+literal "false"
+
+\end_inset
+
+Cirillo,
+ P.,
+ Taleb,
+ N.
+ N.
+ (2016),
+ 
+\begin_inset Quotes eld
+\end_inset
+
+Expected shortfall estimation for apparently infinite-mean models of operational risk
+\begin_inset Quotes erd
+\end_inset
+
+,
+ Quantitative Finance,
+ 16:10,
+ 1485-1494,
+ DOI:
+ 
+\begin_inset CommandInset href
+LatexCommand href
+name "https://doi.org/10.1080/14697688.2016.1162908"
+target "https://doi.org/10.1080/14697688.2016.1162908"
+literal "false"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+label "Embrechts et al (1997)"
+key "Embrechts"
+literal "false"
+
+\end_inset
+
+Embrechts,
+ P.,
+ Klüppelberg,
+ C.
+ and Mikosch,
+ T.
+ (1997) 
+\begin_inset Quotes eld
+\end_inset
+
+Modelling Extremal Events for Insurance and Finance
+\begin_inset Quotes erd
+\end_inset
+
+,
+ Springer (2012 edition)
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+label "Nair et al (2022)"
+key "Nair et al"
+literal "false"
+
+\end_inset
+
+Nair,
+ Jayakrishnan;
+ Wierman,
+ Adam;
+ Zwart,
+ Bert.
+ The Fundamentals of Heavy Tails (Cambridge Series in Statistical and Probabilistic Mathematics),
+ Cambridge University Press,
+ 2022
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+label "Siegrist"
+key "Siegrist"
+literal "false"
+
+\end_inset
+
+Siegrist,
+ K.
+ (2021) 
+\begin_inset Quotes eld
+\end_inset
+
+Probability,
+ Mathematical Statistics,
+ and Stochastic Processes
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Available at 
+\begin_inset CommandInset href
+LatexCommand href
+name "Transformations_of_Random_Variables"
+target "https://stats.libretexts.org/Bookshelves/Probability_Theory/Probability_Mathematical_Statistics_and_Stochastic_Processes_(Siegrist)/03%3A_Distributions/3.07%3A_Transformations_of_Random_Variables"
+literal "false"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+label "STAT_414_Penn_State"
+key "STAT 414"
+literal "false"
+
+\end_inset
+
+
+\begin_inset Quotes eld
+\end_inset
+
+STAT 414:
+ Introduction to Probability Theory
+\begin_inset Quotes erd
+\end_inset
+
+ at Penn State.
+ Available at 
+\begin_inset CommandInset href
+LatexCommand href
+name "STAT_414_Introduction_to_Probability_Theory"
+target "https://online.stat.psu.edu/stat414/lesson/22/22.2"
+literal "false"
+
+\end_inset
+
+
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Part*
+\start_of_appendix
+Appendix
+\end_layout
+
+\begin_layout Section
+Appendix
+\end_layout
+
+\begin_layout Subsection
+Transformed Distributions
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Transformed-Distributions"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Pareto Integrals
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Pareto-Integrals"
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
