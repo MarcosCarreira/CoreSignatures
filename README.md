@@ -1,39 +1,19 @@
-# ToGit — Staging directory for GitHub upload
+# Core Signatures and Inversions
 
-This folder mirrors the layout of the public GitHub repository for the
-**Core Signatures and Inversions** paper. Two destinations:
+Marcos Costa Santos Carreira
 
-- **`2026 version/`** — copy as a new top-level folder alongside the existing
-  `2023 version/` in the repository. Contains the 2026 revision deliverables
-  (arXiv-target full version and Wilmott magazine version) with sources,
-  compiled PDFs, figures, and the two Mathematica notebooks cited as
-  companion sources in the paper.
-- **`Notes and Intermediate Results/`** — copy the contents into the existing
-  `Notes and Intermediate Results/` folder in the repository. Contains the
-  Python verification scripts and findings reports from the 2026 revision
-  phase.
+Code, data and manuscripts for *Core Signatures and Inversions*: the core (Lyndon-word)
+coordinates of a truncated path signature, the substitution rules that express every other
+entry in them, and the inversion of core signatures into piecewise-linear paths, with
+time-ordered term structures (interest-rate curves) as the application.
 
-Each subfolder has its own `README.md` with build instructions, file
-descriptions, and dependency notes. Nothing else outside these two
-subfolders is intended for the public repository.
+| Folder | Contents |
+|---|---|
+| `2023 version/` | the original 2023 paper and its companion material |
+| `2026 version/` | the 2026 revision: the full preprint (28 pages, complete proofs and the substitution rules) and the version submitted to *Wilmott* in May 2026 (13 pages), with the two Mathematica notebooks they cite |
+| `2026 R1/` | the *Wilmott* revision 1 (September 2026): the manuscript (23 pages), the mathematical supplement (6 pages: substitution rules, closed-form solutions, proofs), and the Python implementation with the data snapshots, figure scripts and printed figures. Release `wilmott-r1-2026-09` |
+| `Notes and Intermediate results/` | notebooks and verification scripts from the development of the method |
 
-## Not included in this staging directory
-
-The following 2026-phase artefacts are intentionally **excluded** as either
-private correspondence or internal tracking:
-
-- The Wilmott editor cover letter (private correspondence with the editor).
-- The Reviewer #2 follow-up assessment reports (adversarial-LLM reviews
-  used in revision; private to the author).
-- The project card markdown (internal phase tracking).
-- LyX intermediate files (`.lyx`) — anyone who wants LyX format can
-  open the `.tex` files in LyX directly.
-- The arXiv source tarball (`.tar.gz`) — redundant with the source files
-  already inside `2026/`.
-- The previous earlier-iteration verification scripts (`verify_algorithm.py`,
-  `verify_algorithm_v2.py`, `verify_n4_wilmott.py`) — superseded by the
-  current versions kept here.
-
-If at some later point any of those exclusions should be reconsidered,
-they live in `~/CoreSignaturesImproved/2026/` and
-`~/CoreSignaturesImproved/Reviewer2/`.
+Each folder has its own `README.md` with file descriptions and build or run instructions.
+The Python package in `2026 R1/python/` runs on NumPy and SciPy (pandas and Matplotlib for
+the data and figure scripts); every script runs without arguments.

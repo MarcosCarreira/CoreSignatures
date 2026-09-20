@@ -1,0 +1,530 @@
+%% =========================================================================
+%%  Core Signatures and Inversions --- Wilmott magazine version, revision 1
+%%
+%%  Revised after the Wilmott review of August 2026 (MS WP-1259). The paper
+%%  is self-contained: Proposition 1 is proved in Appendix B, the
+%%  substitution rules through level 5 are in Appendix A, the two-piece
+%%  closed forms in Appendix C, and the term-structure application is
+%%  Section 5; the Python code is in the public GitHub repository, not
+%%  printed. No pointer to any notebook, preprint or work in preparation.
+%% =========================================================================
+
+\documentclass[11pt,english]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[table]{xcolor}
+\usepackage{colortbl}
+\usepackage{babel}
+\usepackage{cprotect}
+\usepackage{float}
+\usepackage{url}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage[a4paper]{geometry}
+\geometry{verbose,tmargin=2.5cm,bmargin=2.5cm,lmargin=2.5cm,rmargin=2.5cm,footskip=1cm}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\usepackage{xr-hyper}
+\usepackage[pdfusetitle,
+ bookmarks=true,bookmarksnumbered=false,bookmarksopen=false,
+ breaklinks=false,pdfborder={0 0 1},backref=false,colorlinks=false]
+ {hyperref}
+\hypersetup{colorlinks=true,citecolor=blue}
+\externaldocument{CoreSignaturesAndInversions_Wilmott_R1cut_2026-09}[CoreSignaturesAndInversions_Wilmott_R1cut_2026-09-20.pdf]
+
+\makeatletter
+\providecommand{\tabularnewline}{\\}
+\makeatother
+
+\usepackage{lastpage}
+\usepackage{breakcites}
+\lhead{}\chead{}\rhead{}
+\lfoot{}\cfoot{\thepage\ / \pageref{LastPage}}\rfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\usepackage{indentfirst}
+
+\makeatletter
+\providecommand*{\shuffle}{\mathbin{\mathpalette\shuffle@{}}}
+\newcommand*{\shuffle@}[2]{%
+  \sbox0{$#1\vcenter{}$}%
+  \kern .15\ht0
+  \rlap{\vrule height .25\ht0 depth 0pt width 2.5\ht0}%
+  \raise.1\ht0\hbox to 2.5\ht0{%
+    \vrule height 1.75\ht0 depth -.1\ht0 width .17\ht0
+    \hfill
+    \vrule height 1.75\ht0 depth -.1\ht0 width .17\ht0
+    \hfill
+    \vrule height 1.75\ht0 depth -.1\ht0 width .17\ht0}%
+  \kern .15\ht0
+}
+\makeatother
+
+\usepackage{xurl}
+\newcommand{\nbfile}[1]{\nolinkurl{#1}}
+
+%% Allow TeX to expand justification in difficult paragraphs rather
+%% than letting them bleed into the right margin.
+\setlength{\emergencystretch}{3em}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{definition}
+\newtheorem{example}[theorem]{Example}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+%% CUT VARIANT (2026-09-20): Appendices A, B and C and the proofs of the three stability
+%% theorems moved to the supplement; Example obstruction and Lemma concat dropped, Corollary
+%% regression-bound kept with a shorter discussion; see make_cut_version.py. Supplement:
+%% supplement CoreSignaturesAndInversions_Wilmott_R1_Supplement_2026-09.tex.
+\begin{document}
+\title{Core Signatures and Inversions\\ \large Supplementary material: substitution rules, closed-form solutions and proofs}
+\author{Marcos Costa Santos Carreira}
+\date{September 2026}
+\maketitle
+\noindent This supplement accompanies the manuscript \emph{Core Signatures and
+Inversions} (Wilmott, WP-1259, revision 1). Section S1 tabulates the 48
+substitution rules through level five for the binary alphabet; Section S2
+gives the closed-form solutions of the two-segment Chen system and the
+three-segment matching system; Section S3 proves Proposition 1 (core
+variables are Lyndon coordinates) and Section S4 proves the three
+stability theorems. References to the main text are marked as such;
+the theorems, lemmas and equations numbered here belong to this
+supplement.
+\renewcommand{\thesection}{S\arabic{section}}
+\renewcommand{\theequation}{S\arabic{section}.\arabic{equation}}
+\makeatletter\renewcommand{\@seccntformat}[1]{\csname the#1\endcsname.\quad}\@addtoreset{equation}{section}\makeatother
+\section{Substitution rules \texorpdfstring{$Q_{m}$}{Qm} for \texorpdfstring{$d=2$}{d=2}\label{app:Q}}
+
+The substitution rules express every non-core signature entry as a
+polynomial in core entries. The cores referenced below are
+\[
+C_{1}=\{s_{1},s_{2}\},\quad C_{2}=C_{1}\cup\{s_{1,2}\},\quad C_{3}=C_{2}\cup\{s_{1,1,2},s_{1,2,2}\}\,,
+\]
+\[
+C_{4}=C_{3}\cup\{s_{1,1,1,2},s_{1,1,2,2},s_{1,2,2,2}\}\,,
+\]
+\[
+C_{5}=C_{4}\cup\{s_{1,1,1,1,2},s_{1,1,1,2,2},s_{1,1,2,1,2},s_{1,1,2,2,2},s_{1,2,1,2,2},s_{1,2,2,2,2}\}\,.
+\]
+Within each primitive rotation class of words the representative kept
+is the lexicographically smallest rotation, the Lyndon word of the
+class (Section \ref{app:Proof}); a letter multiset can contain several Lyndon
+words ($11122$ and $11212$ at length five).
+
+\paragraph{Level 2.}
+$s_{1,1}=\tfrac{1}{2}s_{1}^{2}$, \ $s_{2,1}=s_{1}s_{2}-s_{1,2}$,
+\ $s_{2,2}=\tfrac{1}{2}s_{2}^{2}$.
+
+\paragraph{Level 3.}
+$s_{1,1,1}=\tfrac{1}{6}s_{1}^{3}$, \ $s_{1,2,1}=s_{1}s_{1,2}-2s_{1,1,2}$,
+\ $s_{2,1,1}=-s_{1}s_{1,2}+s_{1,1,2}+\tfrac{1}{2}s_{2}s_{1}^{2}$,
+\ $s_{2,1,2}=s_{2}s_{1,2}-2s_{1,2,2}$, \ $s_{2,2,1}=-s_{2}s_{1,2}+s_{1,2,2}+\tfrac{1}{2}s_{1}s_{2}^{2}$,
+\ $s_{2,2,2}=\tfrac{1}{6}s_{2}^{3}$.
+
+\paragraph{Level 4.}
+$s_{1,1,1,1}=s_{1}^{4} / 24$,
+$s_{1,1,2,1}=s_{1} s_{1,1,2} - 3 s_{1,1,1,2}$,
+$s_{1,2,1,1}=s_{1}^{2} s_{1,2} / 2 - 2 s_{1} s_{1,1,2} + 3 s_{1,1,1,2}$,
+$s_{1,2,1,2}=- 2 s_{1,1,2,2} + s_{1,2}^{2} / 2$,
+$s_{1,2,2,1}=s_{1} s_{1,2,2} - s_{1,2}^{2} / 2$,
+$s_{2,1,1,1}=s_{1}^{3} s_{2} / 6 - s_{1}^{2} s_{1,2} / 2 + s_{1} s_{1,1,2} - s_{1,1,1,2}$,
+$s_{2,1,1,2}=s_{1,1,2} s_{2} - s_{1,2}^{2} / 2$,
+$s_{2,1,2,1}=s_{1} s_{1,2} s_{2} - 2 s_{1} s_{1,2,2} - 2 s_{1,1,2} s_{2} + 2 s_{1,1,2,2} + s_{1,2}^{2} / 2$,
+$s_{2,1,2,2}=s_{1,2,2} s_{2} - 3 s_{1,2,2,2}$,
+$s_{2,2,1,1}=s_{1}^{2} s_{2}^{2} / 4 - s_{1} s_{1,2} s_{2} + s_{1} s_{1,2,2} + s_{1,1,2} s_{2} - s_{1,1,2,2}$,
+$s_{2,2,1,2}=s_{1,2} s_{2}^{2} / 2 - 2 s_{1,2,2} s_{2} + 3 s_{1,2,2,2}$,
+$s_{2,2,2,1}=s_{1} s_{2}^{3} / 6 - s_{1,2} s_{2}^{2} / 2 + s_{1,2,2} s_{2} - s_{1,2,2,2}$,
+$s_{2,2,2,2}=s_{2}^{4} / 24$.
+
+\paragraph{Level 5.}
+$s_{1,1,1,1,1}=s_{1}^{5} / 120$,
+$s_{1,1,1,2,1}=s_{1} s_{1,1,1,2} - 4 s_{1,1,1,1,2}$,
+$s_{1,1,2,1,1}=s_{1}^{2} s_{1,1,2} / 2 - 3 s_{1} s_{1,1,1,2} + 6 s_{1,1,1,1,2}$,
+$s_{1,1,2,2,1}=s_{1} s_{1,1,2,2} - 3 s_{1,1,1,2,2} - s_{1,1,2,1,2}$,
+$s_{1,2,1,1,1}=s_{1}^{3} s_{1,2} / 6 - s_{1}^{2} s_{1,1,2} + 3 s_{1} s_{1,1,1,2} - 4 s_{1,1,1,1,2}$,
+$s_{1,2,1,1,2}=- 6 s_{1,1,1,2,2} + s_{1,1,2} s_{1,2} - 3 s_{1,1,2,1,2}$,
+$s_{1,2,1,2,1}=- 2 s_{1} s_{1,1,2,2} + s_{1} s_{1,2}^{2} / 2 + 12 s_{1,1,1,2,2} - 2 s_{1,1,2} s_{1,2} + 4 s_{1,1,2,1,2}$,
+$s_{1,2,2,1,1}=s_{1}^{2} s_{1,2,2} / 2 - s_{1} s_{1,2}^{2} / 2 - 3 s_{1,1,1,2,2} + s_{1,1,2} s_{1,2} - s_{1,1,2,1,2}$,
+$s_{1,2,2,1,2}=- 6 s_{1,1,2,2,2} + s_{1,2} s_{1,2,2} - 3 s_{1,2,1,2,2}$,
+$s_{1,2,2,2,1}=s_{1} s_{1,2,2,2} + 4 s_{1,1,2,2,2} - s_{1,2} s_{1,2,2} + 2 s_{1,2,1,2,2}$,
+$s_{2,1,1,1,1}=s_{1}^{4} s_{2} / 24 - s_{1}^{3} s_{1,2} / 6 + s_{1}^{2} s_{1,1,2} / 2 - s_{1} s_{1,1,1,2} + s_{1,1,1,1,2}$,
+$s_{2,1,1,1,2}=s_{1,1,1,2} s_{2} + 4 s_{1,1,1,2,2} - s_{1,1,2} s_{1,2} + 2 s_{1,1,2,1,2}$,
+$s_{2,1,1,2,1}=s_{1} s_{1,1,2} s_{2} - s_{1} s_{1,2}^{2} / 2 - 3 s_{1,1,1,2} s_{2} - 6 s_{1,1,1,2,2} + 2 s_{1,1,2} s_{1,2} - 3 s_{1,1,2,1,2}$,
+$s_{2,1,1,2,2}=s_{1,1,2,2} s_{2} - 3 s_{1,1,2,2,2} - s_{1,2,1,2,2}$,
+$s_{2,1,2,1,1}=s_{1}^{2} s_{1,2} s_{2} / 2 - s_{1}^{2} s_{1,2,2} - 2 s_{1} s_{1,1,2} s_{2} + 2 s_{1} s_{1,1,2,2} + s_{1} s_{1,2}^{2} / 2 + 3 s_{1,1,1,2} s_{2} - s_{1,1,2} s_{1,2} + s_{1,1,2,1,2}$,
+$s_{2,1,2,1,2}=- 2 s_{1,1,2,2} s_{2} + 12 s_{1,1,2,2,2} + s_{1,2}^{2} s_{2} / 2 - 2 s_{1,2} s_{1,2,2} + 4 s_{1,2,1,2,2}$,
+$s_{2,1,2,2,1}=s_{1} s_{1,2,2} s_{2} - 3 s_{1} s_{1,2,2,2} - 6 s_{1,1,2,2,2} - s_{1,2}^{2} s_{2} / 2 + 2 s_{1,2} s_{1,2,2} - 3 s_{1,2,1,2,2}$,
+$s_{2,1,2,2,2}=s_{1,2,2,2} s_{2} - 4 s_{1,2,2,2,2}$,
+$s_{2,2,1,1,1}=s_{1}^{3} s_{2}^{2} / 12 - s_{1}^{2} s_{1,2} s_{2} / 2 + s_{1}^{2} s_{1,2,2} / 2 + s_{1} s_{1,1,2} s_{2} - s_{1} s_{1,1,2,2} - s_{1,1,1,2} s_{2} + s_{1,1,1,2,2}$,
+$s_{2,2,1,1,2}=s_{1,1,2} s_{2}^{2} / 2 - 3 s_{1,1,2,2,2} - s_{1,2}^{2} s_{2} / 2 + s_{1,2} s_{1,2,2} - s_{1,2,1,2,2}$,
+$s_{2,2,1,2,1}=s_{1} s_{1,2} s_{2}^{2} / 2 - 2 s_{1} s_{1,2,2} s_{2} + 3 s_{1} s_{1,2,2,2} - s_{1,1,2} s_{2}^{2} + 2 s_{1,1,2,2} s_{2} + s_{1,2}^{2} s_{2} / 2 - s_{1,2} s_{1,2,2} + s_{1,2,1,2,2}$,
+$s_{2,2,1,2,2}=s_{1,2,2} s_{2}^{2} / 2 - 3 s_{1,2,2,2} s_{2} + 6 s_{1,2,2,2,2}$,
+$s_{2,2,2,1,1}=s_{1}^{2} s_{2}^{3} / 12 - s_{1} s_{1,2} s_{2}^{2} / 2 + s_{1} s_{1,2,2} s_{2} - s_{1} s_{1,2,2,2} + s_{1,1,2} s_{2}^{2} / 2 - s_{1,1,2,2} s_{2} + s_{1,1,2,2,2}$,
+$s_{2,2,2,1,2}=s_{1,2} s_{2}^{3} / 6 - s_{1,2,2} s_{2}^{2} + 3 s_{1,2,2,2} s_{2} - 4 s_{1,2,2,2,2}$,
+$s_{2,2,2,2,1}=s_{1} s_{2}^{4} / 24 - s_{1,2} s_{2}^{3} / 6 + s_{1,2,2} s_{2}^{2} / 2 - s_{1,2,2,2} s_{2} + s_{1,2,2,2,2}$,
+$s_{2,2,2,2,2}=s_{2}^{5} / 120$.
+
+The rules were generated by the shuffle-product elimination of
+Section \ref{sec:Core} of the main text and checked against the signatures of random
+piecewise-linear paths computed directly from Chen's identity; the
+largest discrepancy over the 48 rules is $4\times10^{-16}$. Each rule
+has the form that Proposition \ref{prop:core-is-lyndon} of the main text predicts: the
+word's Lyndon factorisation supplies the leading product of core
+entries, and every other term is a product of core entries of
+lexicographically smaller words.
+
+%% =========================================================================
+
+\section{Closed-form solutions of the time-ordered Chen systems\label{app:ChenSolutions}}
+%% =========================================================================
+
+\paragraph{Two pieces.}
+The system of Table \ref{tab:SystemChenTS2P} of the main text has the unknowns
+$T,t_{1},\beta_{1},\beta_{2}$ and the five equations at levels 1--3.
+Dropping equation $\#5$ ($z_{1,2,2}$) and solving the remaining four
+gives Solution 1:
+\begin{align}
+T & =z_{1}\,,\qquad t_{1}=\frac{2\,(z_{1}z_{1,2}-3z_{1,1,2})}{z_{1}z_{2}-2z_{1,2}}\,,\nonumber\\
+\beta_{1} & =\frac{z_{1}^{2}z_{2}^{2}-2z_{1}z_{2}z_{1,2}+4z_{1,2}^{2}-6z_{2}z_{1,1,2}}{2\,z_{1}\,(z_{1}z_{1,2}-3z_{1,1,2})}\,,\qquad
+\beta_{2}=\frac{2\,(3z_{2}z_{1,1,2}-2z_{1,2}^{2})}{z_{1}\,(z_{1}^{2}z_{2}-4z_{1}z_{1,2}+6z_{1,1,2})}\,.\label{eq:TwoPieceSol1}
+\end{align}
+Dropping equation $\#4$ ($z_{1,1,2}$) instead gives Solution 2:
+\begin{align}
+T & =z_{1}\,,\qquad t_{1}=\frac{2\,(3z_{1}z_{1,2,2}-2z_{1,2}^{2})}{z_{2}\,(z_{1}z_{2}-2z_{1,2})}\,,\nonumber\\
+\beta_{1} & =\frac{z_{2}\,(z_{1}z_{2}^{2}-4z_{2}z_{1,2}+6z_{1,2,2})}{2\,(3z_{1}z_{1,2,2}-2z_{1,2}^{2})}\,,\qquad
+\beta_{2}=\frac{2\,z_{2}\,(z_{2}z_{1,2}-3z_{1,2,2})}{z_{1}^{2}z_{2}^{2}-2z_{1}z_{2}z_{1,2}+4z_{1,2}^{2}-6z_{1}z_{1,2,2}}\,.\label{eq:TwoPieceSol2}
+\end{align}
+The middle point $P_{1}=(t_{1},\beta_{1}t_{1})$ of each solution is
+\begin{align}
+P_{1}^{(1)} & =\biggl(\frac{2(z_{1}z_{1,2}-3z_{1,1,2})}{z_{1}z_{2}-2z_{1,2}},\;\frac{z_{1}^{2}z_{2}^{2}-2z_{1}z_{2}z_{1,2}+4z_{1,2}^{2}-6z_{2}z_{1,1,2}}{z_{1}\,(z_{1}z_{2}-2z_{1,2})}\biggr)\,,\\
+P_{1}^{(2)} & =\biggl(\frac{2(3z_{1}z_{1,2,2}-2z_{1,2}^{2})}{z_{2}\,(z_{1}z_{2}-2z_{1,2})},\;\frac{z_{1}z_{2}^{2}-4z_{2}z_{1,2}+6z_{1,2,2}}{z_{1}z_{2}-2z_{1,2}}\biggr)\,.
+\end{align}
+Substituting Solution 1 into equation $\#5$ leaves the residual
+$(z_{1}z_{2}z_{1,2}+2z_{1,2}^{2}-3z_{1}z_{1,2,2}-3z_{2}z_{1,1,2})/(3z_{1})$,
+and Solution 2 into equation $\#4$ the same numerator over $3z_{2}$:
+where the respective formulas are defined, the residuals vanish exactly
+when the consistency condition holds. If both formulas are defined,
+the solutions then coincide. Admissibility still requires $0<t_1<T$. The
+denominators show the degenerate cases discussed there: $z_{1}z_{2}-2z_{1,2}=0$
+(the Lévy area relative to the chord is zero, so the path is
+indistinguishable at level 2 from its chord) and, for Solution 2,
+$z_{2}=0$. The solutions were obtained by elimination in a computer
+algebra system and checked by substitution into the retained equations and by calculating
+the displayed omitted-equation residuals.
+
+\paragraph{Three pieces.}
+With slopes $\beta_{1},\beta_{2},\beta_{3}$ on $[0,t_{1}]$, $[t_{1},t_{2}]$,
+$[t_{2},T]$ and $X_{i}$ the $i$-th segment, Chen's identity gives every
+entry of the concatenation as
+\begin{equation}
+\sigma_{w}(X_{1}*X_{2}*X_{3})\;=\;\sum_{w=uvy}\sigma_{u}(X_{1})\,\sigma_{v}(X_{2})\,\sigma_{y}(X_{3})\,,\qquad
+\sigma_{u}(X_{i})=\frac{\Delta t_{i}^{\,|u|_{1}}\,(\beta_{i}\Delta t_{i})^{|u|_{2}}}{|u|!}\,,\label{eq:ThreePieceChen}
+\end{equation}
+the sum over all splittings of $w$ into three (possibly empty)
+consecutive factors, $|u|_{a}$ the number of letters $a$ in $u$, and
+$\Delta t_{1}=t_{1}$, $\Delta t_{2}=t_{2}-t_{1}$, $\Delta t_{3}=T-t_{2}$.
+The three-piece system equates \eqref{eq:ThreePieceChen} to the target
+for the eight core words of length $\leq4$: six unknowns
+$T,t_{1},t_{2},\beta_{1},\beta_{2},\beta_{3}$, eight equations. The
+single-letter-2 equations are the moment conditions of Proposition
+\ref{prop:moment-identity} of the main text:
+\[
+T=z_{1}\,,\qquad
+\sum_{i=1}^{3}\beta_{i}\,\frac{t_{i}^{\,k+1}-t_{i-1}^{\,k+1}}{(k+1)!}\;=\;z_{1^{k}2}\,,\qquad k=0,1,2,3\,,
+\]
+with $t_{0}=0$, $t_{3}=T$; the three remaining equations, for
+$z_{1,2,2}$, $z_{1,1,2,2}$ and $z_{1,2,2,2}$, are polynomials of
+degrees 2, 2 and 3 in the slopes obtained by expanding
+\eqref{eq:ThreePieceChen} (the last has forty monomials and is not
+printed). Selecting six equations gives a formally square subsystem,
+whose solvability and independence require checking; omitted equations
+still have to be satisfied for exact recovery; in practice we solve the three-piece and larger
+systems by the regression of Section \ref{subsec:Regression} of the main text, which
+uses all the equations at once.
+
+
+\section{Proof of Proposition \ref{prop:core-is-lyndon} of the main text\label{app:Proof}}
+
+The proof assembles four classical results --- the Lyndon basis
+theorem, Poincaré--Birkhoff--Witt, Radford's theorem and Lyndon
+factorisation --- and one computation, the elimination of Section
+\ref{sec:Core} of the main text. We state the results in the form used and give
+references for their proofs; the two lemmas and the proof of the
+proposition are ours.
+
+\paragraph{Setting.}
+Let $V=\mathbb{R}^{d}$ with basis $\mathcal{A}=\{1,\ldots,d\}$, let
+$T(V)=\bigoplus_{n\geq0}V^{\otimes n}$ be the tensor algebra with the
+words on $\mathcal{A}$ as basis, and $T((V))$ its completion, where
+signatures live. The vector space $T(V)$ carries two Hopf algebra
+structures (\cite{Reutenauer} Sections 1.4--1.6): the
+\emph{concatenation--deshuffle} structure $T(V)_{\bullet}$, whose
+product is juxtaposition of words and whose coproduct is defined on
+letters by $\Delta_{\shuffle}(a)=a\otimes1+1\otimes a$ and extended
+multiplicatively; and the \emph{shuffle--deconcatenation} structure
+$T(V)_{\shuffle}$, whose product is the shuffle $\shuffle$ of
+\eqref{eq:ShuffleProduct} and whose coproduct is $\Delta_{\bullet}(w)=\sum_{w=uv}u\otimes v$.
+The two are graded-dual under the pairing $\langle u,v\rangle=\delta_{u,v}$
+on words.
+
+A series $g\in T((V))$ with empty-word coefficient $1$ is
+\emph{group-like} if $\Delta_{\shuffle}(g)=g\otimes g$. The signature
+of a bounded-variation path is group-like: writing $\sigma_{w}=\langle S(X),w\rangle$,
+the shuffle identity \eqref{eq:ShuffleProduct},
+$\sigma_{I}\,\sigma_{J}=\sum_{K\in I\shuffle J}\sigma_{K}$, says
+exactly that the linear functional $w\mapsto\sigma_{w}$ is an algebra
+homomorphism $(T(V),\shuffle)\to\mathbb{R}$, that is, a
+\emph{character} of the shuffle algebra; and characters of
+$T(V)_{\shuffle}$ are the group-like elements of $T((V))_{\bullet}$.
+The set of truncated signatures
+\[
+G^{m}(\mathbb{R}^{d})=\bigl\{S^{(\leq m)}(X):X\text{ of bounded variation in }\mathbb{R}^{d}\bigr\}\subset T^{m}(V)
+\]
+is the step-$m$ free nilpotent Lie group on $d$ generators, an
+algebraic variety cut out by the shuffle relations
+$\sigma_{I}\sigma_{J}=\sum_{K\in I\shuffle J}\sigma_{K}$ with
+$|I|+|J|\leq m$ (total degree meaning word length); \cite{varieties}
+call it the universal variety and identify
+its coordinate ring with the polynomial algebra in the entries
+$\sigma_{w}$, $|w|\leq m$, modulo the truncated shuffle ideal
+$\mathcal{I}_{\shuffle}^{(\leq m)}$.
+
+\paragraph{The four classical results.}
+
+\begin{theorem}[Lyndon basis; \cite{Reutenauer} Theorem 5.1]
+\label{thm:Lyndon-basis}
+Define the bracket of a Lyndon word recursively by $[a]=a$ for a
+letter and $[w]=[[u],[v]]$ for the standard factorisation $w=uv$ with
+$v$ the longest proper Lyndon suffix of $w$. The brackets
+$\{[w]:w\text{ Lyndon on }\mathcal{A}\}$ form a homogeneous basis of
+the free Lie algebra $\mathfrak{L}(V)$. In particular the number of
+Lyndon words of length $n$ equals $\dim\mathfrak{L}^{n}(V)$, which is
+Witt's formula \eqref{eq:Witt}.
+\end{theorem}
+
+\begin{theorem}[Poincaré--Birkhoff--Witt; \cite{Reutenauer} Theorem 0.5]
+\label{thm:PBW}
+The universal enveloping algebra of $\mathfrak{L}(V)$ is $T(V)_{\bullet}$,
+with $\mathfrak{L}(V)\hookrightarrow T(V)_{\bullet}$ given by
+$[a,b]=a\otimes b-b\otimes a$ on letters. Consequently the ordered
+monomials $[w_{1}]^{\otimes n_{1}}\otimes\cdots\otimes[w_{k}]^{\otimes n_{k}}$,
+$w_{1}<\cdots<w_{k}$ Lyndon, $n_{i}\geq1$, form a basis of
+$T(V)_{\bullet}$.
+\end{theorem}
+
+\begin{theorem}[Radford; \cite{Radford}, \cite{Reutenauer} Theorem 6.1]
+\label{thm:Radford}
+The shuffle algebra $(T(V),\shuffle)$ is the free commutative algebra
+on the set $\mathcal{L}$ of Lyndon words: every element of $T(V)$ is
+uniquely a polynomial in Lyndon words under the shuffle product.
+Moreover, if $w=l_{1}l_{2}\cdots l_{k}$ with $l_{1}\geq\cdots\geq l_{k}$
+Lyndon is the Lyndon factorisation of $w$, and $n_{1},\ldots,n_{r}$ are
+the multiplicities of the distinct factors, then
+\begin{equation}
+l_{1}\shuffle l_{2}\shuffle\cdots\shuffle l_{k}\;=\;n_{1}!\cdots n_{r}!\;w\;+\;\sum_{v<w}c_{v}\,v\,,\qquad c_{v}\in\mathbb{Z}_{\geq0}\,,\label{eq:Radford-triangular}
+\end{equation}
+the sum running over words $v$ lexicographically smaller than $w$
+with the same letter multiset.
+\end{theorem}
+
+\begin{lemma}[Lyndon factorisation; \cite{Reutenauer}, Chapter 5]
+\label{lem:Duval}
+Every word $w$ on $\mathcal{A}$ has a unique factorisation
+$w=l_{1}l_{2}\cdots l_{k}$ into Lyndon words with $l_{1}\geq\cdots\geq l_{k}$.
+A primitive word (one that is not a proper power) has exactly one
+Lyndon word among its rotations, namely the lexicographically smallest
+rotation.
+\end{lemma}
+
+\paragraph{Two lemmas.}
+
+\begin{lemma}[Lyndon entries are a transcendence basis]
+\label{lem:transcendence}
+For each $m\geq1$,
+\begin{equation}
+\mathcal{O}\bigl(G^{m}(\mathbb{R}^{d})\bigr)\;=\;\mathbb{R}\bigl[\sigma_{w}:|w|\leq m\bigr]\big/\mathcal{I}_{\shuffle}^{(\leq m)}\;\cong\;\mathbb{R}\bigl[\sigma_{w}:w\in\mathcal{L},\,|w|\leq m\bigr]\,,\label{eq:RadfordTruncated}
+\end{equation}
+and every $\sigma_{v}$ with $v$ non-Lyndon, $|v|\leq m$, equals a
+unique polynomial $P_{v}$ in the entries $\sigma_{w}$, $w$ Lyndon,
+$|w|\leq|v|$.
+\end{lemma}
+
+\begin{proof}
+Evaluate a character $\chi$ of $(T(V),\shuffle)$ on
+\eqref{eq:Radford-triangular}: since $\chi$ is multiplicative for
+$\shuffle$,
+\[
+\chi(l_{1})\cdots\chi(l_{k})\;=\;n_{1}!\cdots n_{r}!\;\chi(w)+\sum_{v<w}c_{v}\,\chi(v)\,.
+\]
+Induct on the lexicographic order within each length: the smallest
+word of length $n$ is $1^{n}$, whose only factor is the letter $1$
+with multiplicity $n$, so $\chi(1^{n})=\chi(1)^{n}/n!$ and no sum
+appears. For a general non-Lyndon $w$, every $v<w$ in the sum is
+either Lyndon or has already been expressed, so $\chi(w)$ is a
+polynomial in the Lyndon values of length $\leq|w|$; this is $P_{w}$,
+and its existence for every character means $\sigma_{w}-P_{w}(\sigma)$
+vanishes on $G^{m}$. Uniqueness: two such polynomials would give a
+polynomial relation among the Lyndon entries valid on every group-like
+element, and by Theorem \ref{thm:Radford} the Lyndon words are free
+generators of $(T(V),\shuffle)$, so the characters take arbitrary
+values on them (a character is determined by, and may be prescribed
+freely on, the free generators) and the relation is trivial.
+
+For \eqref{eq:RadfordTruncated}, the polynomials $P_{v}$ for $|v|\leq m$
+are derived from shuffle relations of total word weight $\leq m$, so modulo
+$\mathcal{I}_{\shuffle}^{(\leq m)}$ every entry is a polynomial in the
+Lyndon entries of length $\leq m$, and the quotient is generated by
+them; by the uniqueness just shown they satisfy no polynomial relation
+on $G^{m}$, so the quotient is the polynomial ring on them. The
+vanishing ideal of $G^{m}$ contains $\mathcal{I}_{\shuffle}^{(\leq m)}$
+and the quotient by the latter already has no further relation valid on
+$G^{m}$, so the two ideals coincide and the quotient is the coordinate
+ring. (That the truncated signatures of bounded-variation paths fill
+the whole group $G^{m}$, so that ``valid on $G^{m}$'' and ``valid on
+every group-like element of $T^{m}(V)$'' agree, is Chow's theorem;
+piecewise-linear paths suffice.)
+\end{proof}
+
+\begin{lemma}[The elimination keeps the Lyndon representatives]
+\label{lem:elimination}
+Fix a level $n$ and process the words of length $n$ in increasing
+lexicographic order. Solve $\sigma_{w}$ whenever a relation generated by
+the shuffle identities \eqref{eq:ShuffleProduct} expresses it as a
+polynomial in entries of lexicographically smaller words of length $n$
+and entries of lower level; otherwise leave $\sigma_{w}$ free. Then the
+free entries at level $n$ are exactly those indexed by the Lyndon words
+of length $n$. This is the elimination of Section \ref{sec:Core} of the main text.
+\end{lemma}
+
+\begin{proof}
+Let $w$ be non-Lyndon with Lyndon factorisation $w=l_{1}\cdots l_{k}$,
+$k\geq2$, so every factor has length below $n$. Evaluating the
+triangular identity \eqref{eq:Radford-triangular} on a path ---
+legitimate because $w\mapsto\sigma_{w}$ is a character of the shuffle
+algebra, and the $k$-fold shuffle is generated by the pairwise identities
+\eqref{eq:ShuffleProduct} --- gives
+\[
+n_{1}!\cdots n_{r}!\;\sigma_{w}\;=\;\sigma_{l_{1}}\cdots\sigma_{l_{k}}\;-\;\sum_{v<w}c_{v}\,\sigma_{v}\,,
+\]
+a relation of the required form: the product on the right involves
+lower levels only, and every $v$ in the sum is a smaller word of
+length $n$, already processed. So every non-Lyndon word is solved.
+
+Let $w$ be Lyndon and suppose, for contradiction, that some relation
+expresses $\sigma_{w}$ as a polynomial $Q$ in smaller words of length
+$n$ and lower-level entries. Replace each smaller non-Lyndon word by its
+polynomial $P_{v}$ (Lemma \ref{lem:transcendence}); $Q$ becomes a
+polynomial in Lyndon entries other than $\sigma_{w}$, and
+$\sigma_{w}-Q=0$ holds on every group-like element. That is a
+non-trivial polynomial relation among the Lyndon entries of length
+$\leq n$, which Lemma \ref{lem:transcendence} rules out. So every
+Lyndon word stays free. The count checks: the free set has
+$\ell_{d}(n)$ elements, the dimension of the level-$n$ solution space
+by Lemma \ref{lem:transcendence}, so no relation is left unused.
+
+The rule of thumb used in the computation follows: within a rotation
+class of length-$n$ words the free word is the lexicographically
+smallest rotation, which by Lemma \ref{lem:Duval} is the Lyndon word of
+the class when the class is primitive; a non-primitive class $u^{k}$ has
+no Lyndon member and is eliminated entirely, each of its words by the
+triangular identity for its own Lyndon factorisation (for $u$ Lyndon,
+that of $u^{k}$ is $u$ repeated $k$ times, and the identity reads
+$\sigma_{u}^{\,k}=k!\,\sigma_{u^{k}}+(\text{smaller words})$).
+\end{proof}
+
+\paragraph{Proof of Proposition \ref{prop:core-is-lyndon} of the main text.}
+Lemma \ref{lem:elimination} identifies the core set $C_{m}$ produced by
+the elimination with the Lyndon words of length $\leq m$, which is the
+first statement. Lemma \ref{lem:transcendence} identifies the
+corresponding entries with a transcendence basis of the coordinate ring
+of $G^{m}(\mathbb{R}^{d})$, which is the second. The substitution rules
+$Q_{m}$ are the polynomials $P_{v}$ of Lemma \ref{lem:transcendence},
+written out for each non-Lyndon $v$ with $|v|\leq m$ (Section S1 of the supplement); they are the inverse of the isomorphism
+\eqref{eq:RadfordTruncated} on the chosen representatives, which is the
+third. \hfill$\square$
+
+The count $|C_{m}|=\sum_{n\leq m}\ell_{d}(n)$ and the Pascal-triangle
+refinement of Section \ref{sec:Core} of the main text follow from Theorem
+\ref{thm:Lyndon-basis} and the multi-graded Witt formula.
+
+\section{Proofs of the stability theorems of the main text (Theorems \ref{thm:polystab}, \ref{thm:localdepth} and \ref{thm:dampedmetric})}
+
+\begin{proof}[Proof of Theorem \ref{thm:polystab} of the main text]
+Write $f(t)=\sum_{i=1}^{D}\alpha_{i}t^{i}$. By Proposition
+\ref{prop:moment-identity} of the main text, for $l=1,\ldots,D$,
+\[
+\sigma_{(1^{l-1},2)}[X_{f}]\;=\;\sum_{i=1}^{D}\alpha_{i}\,\frac{i\,T^{l+i-1}}{(l-1)!\,(l+i-1)}\;=:\;(M\alpha)_{l}\,,
+\]
+and $M$ is the scaled Hilbert matrix of Corollary \ref{cor:hilbert} of the main text
+with the rows multiplied by $T^{l-1}/(l-1)!$ and the columns by $T^{i}$,
+hence invertible. These $D$ coordinates are linear in $\alpha$, so
+$E_{D}(f,g)\geq q_{\min}\,\|M(\alpha-\alpha')\|^{2}\geq q_{\min}\,s_{\min}(M)^{2}\,\|\alpha-\alpha'\|^{2}$
+with $s_{\min}(M)>0$ the smallest singular value, for all $f,g$. Every
+other retained coordinate is a polynomial in $\alpha$ (the entries of a
+polynomial path are polynomials in its coefficients, by
+\eqref{eq:IteratedIntegral}), so on a closed ball containing $K$ its
+gradient is bounded and the mean-value inequality gives
+$E_{D}(f,g)\leq C'\,\|\alpha-\alpha'\|^{2}$ with $C'$ depending on the
+ball. Finally $\mathcal{P}_{D}^{0}$ is finite-dimensional, so the
+coefficient norm and the $H^{s}(0,T)$ norm are equivalent on it, with
+constants depending on $D$, $T$ and $s$.
+\end{proof}
+
+\begin{proof}[Proof of Theorem \ref{thm:localdepth} of the main text]
+Choose an invertible $p$-row minor $F$ of $DS_m(\theta_0)$ and apply
+the inverse function theorem. For any further coordinate $h$, the
+function $h\circ F^{-1}$ is $C^1$, proving the factorisation assertion.
+On a sufficiently small convex ball about $\theta_0$, continuity of
+$DF$ makes $\sup\|DF-DF(\theta_0)\|$ smaller than half the smallest
+singular value of $DF(\theta_0)$. Integrating derivatives along
+segments then bounds $|F(\theta)-F(\eta)|$ below by a positive
+constant times $|\theta-\eta|$. A bound on $DS_m$ gives the upper
+estimate. If the path derivative into $H^s$ is injective, its minimum
+norm on the unit sphere of $\mathbb R^p$ is positive. The same
+derivative argument in that Hilbert space gives local upper and
+lower bounds for $\|f_\theta-f_\eta\|_{H^s}$ in parameter distance.
+Combining the estimates proves the last assertion.
+\end{proof}
+
+\begin{proof}[Proof of Theorem \ref{thm:dampedmetric} of the main text]
+Lipschitz functions are absolutely continuous with $|f'|\le L$
+almost everywhere. For a word of length $k$, simplex integration
+gives $|\sigma_w[(t,f)]|\le A^kT^k/k!$. There are at most $2^k$
+words at that level, so the total weighted squared difference there
+is at most $4(2A^2\rho^2)^k$. The resulting geometric majorant
+proves uniform convergence. The distance is the norm of the
+difference of two weighted core vectors in $\ell^2$, hence satisfies
+the triangle inequality.
+
+If $d_\rho(f,g)=0$, the level-one value coordinate gives
+$f(T)=g(T)$. Proposition \ref{prop:moment-identity} of the main text then shows that
+all ordinary moments of $f-g$ vanish. Density of polynomials in
+$C([0,T])$ implies $f=g$, establishing positive definiteness.
+
+Each fixed iterated integral is continuous for uniform convergence
+on $K_L$. To see this directly, let $X_n\to X$ uniformly with a
+common variation bound, and induct on the length of the word using
+the running integrals $I_{wi}(t)=\int_0^t I_w\,dX^i$.
+The integral of $(I_w^n-I_w)$ against $dX_n^i$ tends to zero by the
+variation bound. For the integral of $I_w$ against $d(X_n^i-X^i)$,
+integration by parts bounds it by a constant times
+$\|X_n-X\|_\infty$, since the fixed $I_w$ has bounded variation.
+This proves the induction. Uniform convergence of the series now
+makes $f\mapsto(\sqrt{W_{|w|}}\sigma_w[(t,f)])_w$ continuous into
+$\ell^2$.
+
+The class $K_L$ is compact in the uniform topology by
+Arzel\`a--Ascoli. A continuous injection of a compact space into a
+metric space is a homeomorphism onto its image, and its inverse is
+uniformly continuous. Explicitly, set
+$\omega(r)=\sup\{\|f-g\|_\infty:f,g\in K_L,\ d_\rho(f,g)\le r\}$.
+Compactness and injectivity imply $\omega(r)\to0$, as claimed.
+\end{proof}
+
+\end{document}

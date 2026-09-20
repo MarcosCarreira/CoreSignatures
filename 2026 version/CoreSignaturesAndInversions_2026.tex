@@ -1057,6 +1057,29 @@ root, confirming the two minima are genuinely distinct. This is the
 multi-segment analogue of the single-segment $4.7\%$ obstruction noted
 in Remark \ref{rem:single-segment-obstruction} below.
 
+\paragraph{Mean-$L^{1}$ as an evaluation protocol for inversion algorithms.}
+The role of \nbfile{Frechet.nb} in this paper is not that of a second
+inversion algorithm whose output is meant to coincide numerically with
+the algebraic Chen root. It is the role of an \emph{independent test
+of the inversion in path space}: a method that knows nothing about
+signatures, minimises a clearly interpretable path-space distance
+(mean $L^{1}$ is the simplest choice), and returns the optimal
+piecewise-linear approximant in that distance. We propose this as
+a clean evaluation protocol for any signature-based inversion
+algorithm: pick a path-space distance with a clear geometric meaning,
+minimise it directly by an algorithm that does not use the signature
+structure, and use the resulting approximant as a benchmark against
+which the signature-based inversion is assessed. The 11\% gap reported
+above is the answer the protocol returns for the present algebraic
+Chen inversion on $f(t) = \sin(2\pi t^{2})$ at $n=4$. The same
+protocol applied to the weighted regression
+\eqref{eq:weighted-regression} would, for a given choice of weights,
+quantify how far the regression's path-space optimum sits from the
+path-space best-in-class approximant. Calibrating the weights $w_{w}$
+so as to minimise that gap on a representative training set of paths
+is the empirical complement to a proof of Conjecture
+\ref{conj:norm-equivalence}; it is left to a subsequent paper.
+
 \begin{remark}[On the name ``Fréchet'']
 Because the two paths share the time coordinate, $\mathrm{EuclideanDistance}((t,f),(t,g_{\theta}))=|f-g_{\theta}|$,
 so the notebook objective is mean $L^{1}$, not the Fréchet distance

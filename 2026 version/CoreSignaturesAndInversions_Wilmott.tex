@@ -518,6 +518,20 @@ algorithm --- and converge to distinct nearby minima rather than to
 a common optimum: the multi-segment analogue of the single-segment
 $4.7\%$ obstruction noted below.
 
+\paragraph{Mean-$L^{1}$ as an evaluation protocol.}
+The role of the mean-$L^{1}$ evolutionary algorithm here is not that
+of a second inversion algorithm meant to coincide numerically with
+the algebraic Chen root: it is an \emph{independent test of the
+inversion in path space}. We propose this as a clean evaluation protocol
+for any signature-based inversion: pick a path-space distance with a
+clear geometric meaning, minimise it directly by an algorithm that
+knows nothing about signatures, and use the resulting approximant as
+a benchmark against which the signature-based inversion is assessed.
+Calibrating the regression weights $w_{w}$ to minimise the resulting
+gap against this benchmark, on a training set spanning rough and
+smooth paths, is the empirical complement to a proof of Conjecture
+\ref{conj:norm-equivalence}; it is left to a subsequent paper.
+
 \subsection{The norm-equivalence conjecture}
 
 A heuristic explanation for the coincidence is visible: both methods
