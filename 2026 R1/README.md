@@ -1,7 +1,7 @@
 # Core Signatures and Inversions — Wilmott revision 1 (September 2026)
 
 Companion package for the revised manuscript *Core Signatures and Inversions*
-(Wilmott, MS WP-1259, revision 1). Release `wilmott-r1-2026-09`.
+(Wilmott, MS WP-1259, revision 1).
 
 ## Contents
 
